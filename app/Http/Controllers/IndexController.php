@@ -5,11 +5,25 @@ use App\Helpers\CryptoHelper;
 
 class IndexController extends Controller {
     /**
-     * Show the index page.
+     * Show the index page and perform authentication checking
      *
      * @return Response
      */
     public function showIndexPage(Request $request) {
+        
+        session_start();
+
+        // Authenticate here
+        // redirect to MyITS SSO if not logged in
+        if ( self::isLoggedIn() ) {
+            echo var_dump($_SESSION);
+            return view('index', ['large' => true]);
+        }
+        else {
+            return redirect()->route('login', $request->all());
+        }
+        
+        // These setting can be ignored
         if (env('POLR_SETUP_RAN') != true) {
             return redirect(route('setup'));
         }
