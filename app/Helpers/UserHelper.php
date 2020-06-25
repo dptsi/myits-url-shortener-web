@@ -1,9 +1,11 @@
 <?php
 namespace App\Helpers;
 
+use App\Factories\UserFactory;
 use App\Models\User;
 use App\Helpers\CryptoHelper;
 use Hash;
+use Illuminate\Http\Request;
 
 class UserHelper {
     public static $USER_ROLES = [
@@ -15,7 +17,6 @@ class UserHelper {
         /* XXX: used primarily with test cases */
 
         $user = self::getUserByUsername($username, $inactive=true);
-
         return ($user ? true : false);
     }
 
@@ -23,7 +24,6 @@ class UserHelper {
         /* XXX: used primarily with test cases */
 
         $user = self::getUserByEmail($email, $inactive=true);
-
         return ($user ? true : false);
     }
 
@@ -33,6 +33,34 @@ class UserHelper {
 
     public static function userIsAdmin($username) {
         return (self::getUserByUsername($username)->role == self::$USER_ROLES['admin']);
+    }
+
+    public static function registerUser(Request $request) {
+        // register the user to the database
+        // for the first time logged in
+        $username = session('username');
+        $user_id  = session('user_id');
+        $email    = 'dummy@mail.com';
+        $ip = $request->ip();
+
+        $user = UserFactory::createUserWithSub(
+            $username,
+            $user_id,
+            $email,
+            1,
+            $ip
+        );
+    }
+
+    public static function isUserExist($sub, $username) {
+        $user = User::where('user_id', $sub)->where('username', $username)->first();
+
+        if (!$user) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
     public static function checkCredentials($username, $password) {
