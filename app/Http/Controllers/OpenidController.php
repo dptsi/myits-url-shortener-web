@@ -76,16 +76,32 @@ class OpenidController extends Controller
         $userInfo = $_SESSION['user_info'];
         $username = $userInfo->name;
         $user_id  = $userInfo->sub;
+        if(is_null($userInfo->email)){
+            if(is_null($userInfo->alternate_email)){
+                $email = 'dummy@mail.com';
+            }
+            else{
+                $email = $userInfo->alternate_email;
+            }
+        }
+        else{
+            $email = $userInfo->email;
+        }
         $role = ''; // default role is empty string (user)
 
         $request->session()->put('username', $username);
         $request->session()->put('role', $role);
         $request->session()->put('user_id', $user_id);
+        $request->session()->put('email', $email);
         
         // if the user logged in for the first time
         // then insert the user to the database
         if ( !UserHelper::isUserExist($user_id, $username) ) {
             UserHelper::registerUser($request);
+        }
+        // if the user have logged
+        else{
+            UserHelper::loginUser($user_id, $username, $email);
         }
     }
 
