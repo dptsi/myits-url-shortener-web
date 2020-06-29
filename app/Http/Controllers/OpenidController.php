@@ -99,6 +99,7 @@ class OpenidController extends Controller
         if ( !UserHelper::isUserExist($user_id, $username) ) {
             UserHelper::registerUser($request);
         }
+        
         // if the user have logged
         else{
             UserHelper::loginUser($user_id, $username, $email);
