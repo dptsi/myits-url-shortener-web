@@ -40,7 +40,8 @@ class UserHelper {
         // for the first time logged in
         $username = session('username');
         $user_id  = session('user_id');
-        $email    = 'dummy@mail.com';
+        $email    = session('email');
+        // $email    = 'dummy@mail.com';
         $ip = $request->ip();
 
         $user = UserFactory::createUserWithSub(
@@ -50,6 +51,12 @@ class UserHelper {
             1,
             $ip
         );
+    }
+
+    public static function loginUser($sub, $username, $email){
+        $user = User::where('user_id', $sub)
+                    ->where('username', $username)
+                    ->update(['email' => $email]);
     }
 
     public static function isUserExist($sub, $username) {
