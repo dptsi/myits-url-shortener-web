@@ -41,6 +41,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <link rel="shortcut icon" href="/favicon.ico">
     @yield('css')
+    {{-- Inter font from Google Font --}}
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet"> 
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
     @include('snippets.navbar')
