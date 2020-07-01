@@ -16,7 +16,6 @@ class IndexController extends Controller {
         // Authenticate here
         // redirect to MyITS SSO if not logged in
         if ( self::isLoggedIn() ) {
-            echo var_dump($_SESSION);
             return view('index', ['large' => true]);
         }
         else {
