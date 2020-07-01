@@ -1,10 +1,10 @@
 .custom-url-field {
     display: inline;
-    width: 100px;
+    max-width: 200px;
 }
 
 .site-url-field {
-    color: green;
+    font-weight: bold;
     display: inline;
 }
 
@@ -16,8 +16,13 @@
     margin-top: 20px;
 }
 
+input#shorten {
+    max-width: 100%;
+    width: 200px;
+}
+
 .check-btn {
-    margin-bottom: 30px;
+    margin-bottom: 5px;
 }
 
 #link-availability-status {

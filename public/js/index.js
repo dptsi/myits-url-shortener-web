@@ -1,16 +1,5 @@
 $(function() {
-    var optionsButton = $('#show-link-options');
-    $('#options').hide();
-    var slide = 0;
-    optionsButton.click(function() {
-        if (slide === 0) {
-            $("#options").slideDown();
-            slide = 1;
-        } else {
-            $("#options").slideUp();
-            slide = 0;
-        }
-    });
+
     $('#check-link-availability').click(function() {
         var custom_link = $('.custom-url-field').val();
         var request = $.ajax({
