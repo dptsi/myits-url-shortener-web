@@ -6,7 +6,7 @@
 
 @section('content')
 
-<h2 class='title'><strong>Shorten URL here</strong></h2>
+<h3 class='title'><strong>Type your URL here</strong></h3>
 
 <form method='POST' action='/shorten' role='form'>
     <input type='url' autocomplete='off'

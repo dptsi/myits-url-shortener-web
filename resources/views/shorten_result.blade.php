@@ -5,10 +5,10 @@
 @endsection
 
 @section('content')
-<h3>Shortened URL</h3>
+<h3><strong>Shortened URL</strong></h3>
 <div class="input-group">
     <input type='text' class='result-box form-control' value='{{$short_url}}' id='short_url' />
-    <div class='input-group-addon' id='clipboard-copy' data-clipboard-target='#short_url' data-toggle='tooltip' data-placement='bottom' data-title='Copied!'>
+    <div class='input-group-addon' id='clipboard-copy' data-clipboard-target='#short_url' data-toggle='tooltip' data-placement='bottom' data-title='Link Copied!'>
         <i class='fa fa-clipboard' aria-hidden='true' title='Copy to clipboard'></i>
     </div>
 </div>
