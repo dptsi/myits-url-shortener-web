@@ -85,6 +85,33 @@ body {
     color: #fff;
 }
 
+.dropdown-menu > li > a {
+    color: black;
+}
+.dropdown-menu > li > a:hover {
+    color: black;
+}
+
+.navbar-default .navbar-toggle:hover, 
+.navbar-default .navbar-toggle:focus
+{
+    background-color: #002555;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #fff;
+}
+
+.navbar-default .navbar-collapse, .navbar-default .navbar-form {
+    border-color: #002555;
+}
+
+.navbar-default .navbar-nav > li > a:hover, 
+.navbar-default .navbar-nav > li > a:focus
+{
+    background-color: #002555;
+}
+
 @media (min-width: 768px) {
     .content-div-padding {
         padding-top: 4em;
