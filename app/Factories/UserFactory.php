@@ -41,19 +41,17 @@ class UserFactory {
     )
     {
         $role = UserHelper::$USER_ROLES['default'];
-        $recoveryKey = CryptoHelper::generateRandomHex(50);
-        $hashedPassword = Hash::make(' '); // using space
 
         $user = new User;
 
         // assign the fields
-        $user->username = $username;
+        $user->name = $username;
         $user->user_id = $user_id;
-        $user->password = $hashedPassword;
+        // $user->password = $hashedPassword;
         $user->email = $email;
-        $user->recovery_key = $recoveryKey;
+        // $user->recovery_key = $recoveryKey;
         $user->active = $active;
-        $user->ip = $ip;
+        // $user->ip = $ip;
         $user->role = $role;
         $user->api_key = $api_key;
         $user->api_active = $api_active;
