@@ -8,10 +8,15 @@
 @section('content')
 <div ng-controller="AdminCtrl" class="ng-root">
     <div class='col-md-2'>
+        <!-- <ul class='list-group' role='tablist'> -->
         <ul class='nav nav-pills nav-stacked admin-nav' role='tablist'>
-            <li role='presentation' aria-controls="home" class='admin-nav-item active'><a href='#home'>Home</a></li>
+            <!-- <li role='presentation' aria-controls="home"><a class="nav-link active" href='#home'>Home</a></li>
+            <li role='presentation' aria-controls="links"><a class="nav-link active" href='#links'>Links</a></li> -->
+            <li role='presentation' aria-controls="home" class='admin-nav-item active'><a  href='#home'>Dashboard</a></li>
             <li role='presentation' aria-controls="links" class='admin-nav-item'><a href='#links'>Links</a></li>
-            <li role='presentation' aria-controls="settings" class='admin-nav-item'><a href='#settings'>Settings</a></li>
+            <!-- <li role='presentation' aria-controls="home" class='list-group-item list-group-item-action active'><a  href='#home'>Dashboard</a></li>
+            <li role='presentation' aria-controls="links" class='list-group-item list-group-item-action'><a href='#links'>Links</a></li> -->
+            <!-- <li role='presentation' aria-controls="settings" class='admin-nav-item'><a href='#settings'>Settings</a></li> -->
 
             @if ($role == $admin_role)
             <li role='presentation' class='admin-nav-item'><a href='#admin'>Admin</a></li>
@@ -35,7 +40,7 @@
                 ])
             </div>
 
-            <div role="tabpanel" class="tab-pane" id="settings">
+            <!-- <div role="tabpanel" class="tab-pane" id="settings">
                 <h3>Change Password</h3>
                 <form action='/admin/action/change_password' method='POST'>
                     Old Password: <input class="form-control password-box" type='password' name='current_password' />
@@ -43,7 +48,7 @@
                     <input type="hidden" name='_token' value='{{csrf_token()}}' />
                     <input type='submit' class='btn btn-success change-password-btn'/>
                 </form>
-            </div>
+            </div> -->
 
             @if ($role == $admin_role)
             <div role="tabpanel" class="tab-pane" id="admin">
