@@ -55,12 +55,12 @@ class UserHelper {
 
     public static function loginUser($sub, $username, $email){
         $user = User::where('user_id', $sub)
-                    ->where('username', $username)
+                    ->where('name', $username)
                     ->update(['email' => $email]);
     }
 
     public static function isUserExist($sub, $username) {
-        $user = User::where('user_id', $sub)->where('username', $username)->first();
+        $user = User::where('user_id', $sub)->where('name', $username)->first();
 
         if (!$user) {
             return false;
