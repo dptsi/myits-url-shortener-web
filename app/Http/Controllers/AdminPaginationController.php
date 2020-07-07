@@ -6,6 +6,7 @@ use Yajra\Datatables\Facades\Datatables;
 use App\Models\Link;
 use App\Models\User;
 use App\Helpers\UserHelper;
+use Illuminate\Support\Facades\DB;
 
 class AdminPaginationController extends Controller {
     /**
@@ -35,7 +36,7 @@ class AdminPaginationController extends Controller {
     public function renderDeleteUserCell($user) {
         // Add "Delete" action button
         $btn_class = '';
-        if (session('username') === $user->username) {
+        if (session('username') === $user->name) {
             $btn_class = 'disabled';
         }
         return '<a ng-click="deleteUser($event, \''. $user->id .'\')" class="btn btn-sm btn-danger ' . $btn_class . '">
@@ -54,7 +55,7 @@ class AdminPaginationController extends Controller {
     public function renderAdminApiActionCell($user) {
         // Add "API Info" action button
         return '<a class="activate-api-modal btn btn-sm btn-info"
-            ng-click="openAPIModal($event, \'' . e($user->username) . '\', \'' . $user->api_key . '\', \'' . $user->api_active . '\', \'' . e($user->api_quota) . '\', \'' . $user->id . '\')">
+            ng-click="openAPIModal($event, \'' . e($user->name) . '\', \'' . $user->api_key . '\', \'' . $user->api_active . '\', \'' . e($user->api_quota) . '\', \'' . $user->id . '\')">
             API info
         </a>';
     }
@@ -62,7 +63,7 @@ class AdminPaginationController extends Controller {
     public function renderToggleUserActiveCell($user) {
         // Add user account active state toggle buttons
         $btn_class = '';
-        if (session('username') === $user->username) {
+        if (session('username') === $user->name) {
             $btn_class = ' disabled';
         }
 
@@ -87,7 +88,7 @@ class AdminPaginationController extends Controller {
             ng-model="changeUserRole.u' . $user->id . '" ng-change="changeUserRole(changeUserRole.u' . $user->id . ', '.$user->id.')"
             class="form-control"';
 
-        if (session('username') === $user->username) {
+        if (session('username') === $user->name) {
             // Do not allow user to change own role
             $select_role .= ' disabled';
         }
@@ -128,26 +129,29 @@ class AdminPaginationController extends Controller {
     public function paginateAdminUsers(Request $request) {
         self::ensureAdmin();
 
-        $admin_users = User::select(['username', 'email', 'created_at', 'active', 'api_key', 'api_active', 'api_quota', 'role', 'id']);
+        $admin_users = User::select(['name', 'email', 'created_at', 'active', 'api_key', 'api_active', 'api_quota', 'role', 'id']);
         return Datatables::of($admin_users)
             ->addColumn('api_action', [$this, 'renderAdminApiActionCell'])
             ->addColumn('toggle_active', [$this, 'renderToggleUserActiveCell'])
             ->addColumn('change_role', [$this, 'renderChangeUserRoleCell'])
             ->addColumn('delete', [$this, 'renderDeleteUserCell'])
-            ->escapeColumns(['username', 'email'])
+            ->escapeColumns(['name', 'email'])
             ->make(true);
     }
 
     public function paginateAdminLinks(Request $request) {
         self::ensureAdmin();
 
-        $admin_links = Link::select(['short_url', 'long_url', 'clicks', 'created_at', 'creator', 'is_disabled']);
+        $admin_links = DB::table('links')
+            ->join('users', 'users.user_id', '=', 'links.user_id')
+            ->select(['links.short_url', 'links.long_url', 'links.clicks', 'links.created_at', 'users.name', 'links.is_disabled']);
+        
         return Datatables::of($admin_links)
             ->addColumn('disable', [$this, 'renderToggleLinkActiveCell'])
             ->addColumn('delete', [$this, 'renderDeleteLinkCell'])
             ->editColumn('clicks', [$this, 'renderClicksCell'])
             ->editColumn('long_url', [$this, 'renderLongUrlCell'])
-            ->escapeColumns(['short_url', 'creator'])
+            ->escapeColumns(['short_url', 'name'])
             ->make(true);
     }
 
@@ -155,7 +159,8 @@ class AdminPaginationController extends Controller {
         self::ensureLoggedIn();
 
         $username = session('username');
-        $user_links = Link::where('creator', $username)
+        $user_id  = session('user_id');
+        $user_links = Link::where('user_id', $user_id)
             ->select(['id', 'short_url', 'long_url', 'clicks', 'created_at']);
 
         return Datatables::of($user_links)
