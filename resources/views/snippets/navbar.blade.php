@@ -22,7 +22,7 @@
                     <li class="visible-xs"><a href="{{ route('signup') }}">Sign Up</a></li>
                 @endif
             @else
-                <li class="visible-xs"><a href="{{ route('admin') }}#settings">Settings</a></li>
+                <!-- <li class="visible-xs"><a href="{{ route('admin') }}#settings">Settings</a></li> -->
                 <li class="visible-xs"><a href="{{ route('logout') }}">Logout</a></li>
             @endif
         </ul>
@@ -52,7 +52,7 @@
                     <li class='dropdown'>
                     <a class="dropdown-toggle login-name" href="#" data-toggle="dropdown">{{session('username')}} <strong class="caret"></strong></a>
                         <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu">
-                            <li><a tabindex="-1" href="{{ route('admin') }}#settings">Settings</a></li>
+                            <!-- <li><a tabindex="-1" href="{{ route('admin') }}#settings">Settings</a></li> -->
                             <li><a tabindex="-1" href="{{ route('logout') }}">Logout</a></li>
                         </ul>
                     </li>
