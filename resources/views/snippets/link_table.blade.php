@@ -5,6 +5,7 @@
             <th>Long Link</th>
             <th>Clicks</th>
             <th>Date</th>
+            <th>QR Code</th>
             @if ($table_id == "admin_links_table")
             {{-- Show action buttons only if admin view --}}
             <th>Creator</th>
