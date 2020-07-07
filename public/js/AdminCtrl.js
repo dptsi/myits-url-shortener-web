@@ -136,7 +136,7 @@ polr.controller('AdminCtrl', function($scope, $compile, $timeout) {
                 "ajax": BASE_API_PATH + 'admin/get_admin_users',
 
                 "columns": [
-                    {className: 'wrap-text', data: 'username', name: 'username'},
+                    {className: 'wrap-text', data: 'name', name: 'name'},
                     {className: 'wrap-text', data: 'email', name: 'email'},
                     {data: 'created_at', name: 'created_at'},
 
@@ -156,7 +156,7 @@ polr.controller('AdminCtrl', function($scope, $compile, $timeout) {
                     {className: 'wrap-text', data: 'long_url', name: 'long_url'},
                     {data: 'clicks', name: 'clicks'},
                     {data: 'created_at', name: 'created_at'},
-                    {data: 'creator', name: 'creator'},
+                    {data: 'name', name: 'name'},
 
                     {data: 'disable', name: 'disable', orderable: false, searchable: false},
                     {data: 'delete', name: 'delete', orderable: false, searchable: false}
@@ -253,7 +253,6 @@ polr.controller('AdminCtrl', function($scope, $compile, $timeout) {
 
         apiCall('admin/add_new_user', {
             'username': $scope.newUserParams.username,
-            'user_password': $scope.newUserParams.userPassword,
             'user_email': $scope.newUserParams.userEmail,
             'user_role': $scope.newUserParams.userRole,
         }, function(result) {
