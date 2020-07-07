@@ -135,7 +135,7 @@ class UserHelper {
     }
 
     public static function getUserByUsername($username, $inactive=false) {
-        return self::getUserBy('username', $username, $inactive);
+        return self::getUserBy('name', $username, $inactive);
     }
 
     public static function getUserByEmail($email, $inactive=false) {
