@@ -63,15 +63,14 @@
                 <div ng-if="state.showNewUserWell" class="new-user-fields well">
                     <table class="table">
                         <tr>
-                            <th>Username</th>
-                            <th>Password</th>
+                            <th>Name</th>
                             <th>Email</th>
                             <th>Role</th>
                             <th></th>
                         </tr>
                         <tr id="new-user-form">
                             <td><input type="text" class="form-control" ng-model="newUserParams.username"></td>
-                            <td><input type="password" class="form-control" ng-model="newUserParams.userPassword"></td>
+                            {{-- <td><input type="password" class="form-control" ng-model="newUserParams.userPassword"></td> --}}
                             <td><input type="email" class="form-control" ng-model="newUserParams.userEmail"></td>
                             <td>
                                 <select class="form-control new-user-role" ng-model="newUserParams.userRole">
