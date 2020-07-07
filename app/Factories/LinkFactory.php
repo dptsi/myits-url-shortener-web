@@ -97,7 +97,7 @@ class LinkFactory {
         $link->is_api    = $is_api;
 
         if ($creator) {
-            $link->creator = $creator;
+            $link->user_id = $creator;
         }
 
         if ($is_secret) {

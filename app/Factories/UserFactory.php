@@ -16,12 +16,12 @@ class UserFactory {
         $recovery_key = CryptoHelper::generateRandomHex(50);
 
         $user = new User;
-        $user->username = $username;
-        $user->password = $hashed_password;
+        $user->name = $username;
+        // $user->password = $hashed_password;
         $user->email = $email;
-        $user->recovery_key = $recovery_key;
+        // $user->recovery_key = $recovery_key;
         $user->active = $active;
-        $user->ip = $ip;
+        // $user->ip = $ip;
         $user->role = $role;
         $user->api_key = $api_key;
         $user->api_active = $api_active;

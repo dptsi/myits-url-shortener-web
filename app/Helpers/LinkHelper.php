@@ -65,11 +65,11 @@ class LinkHelper {
 
         if (is_null($username)) {
             // Search for links without a creator only
-            $link = $link_base->where('creator', '')->first();
+            $link = $link_base->where('user_id', '')->first();
         }
         else if (($username !== false)) {
             // Search for links created by $username only
-            $link = $link_base->where('creator', $username)->first();
+            $link = $link_base->where('user_id', $username)->first();
         }
         else {
             // Search for links created by any user

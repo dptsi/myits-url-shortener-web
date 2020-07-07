@@ -34,7 +34,7 @@ class LinkController extends Controller {
         $long_url = $request->input('link-url');
         $custom_ending = $request->input('custom-ending');
         $is_secret = ($request->input('options') == "s" ? true : false);
-        $creator = session('username');
+        $creator = session('user_id');
         $link_ip = $request->ip();
 
         try {
