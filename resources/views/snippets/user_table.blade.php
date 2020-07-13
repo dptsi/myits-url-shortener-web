@@ -1,7 +1,7 @@
 <table id="{{$table_id}}" class="table table-hover">
     <thead>
         <tr>
-            <th>Username</th>
+            <th>Name</th>
             <th>Email</th>
             <th>Created At</th>
             <th>Activated</th>

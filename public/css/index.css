@@ -1,10 +1,10 @@
 .custom-url-field {
     display: inline;
-    max-width: 200px;
+    width: 100px;
 }
 
 .site-url-field {
-    font-weight: bold;
+    color: green;
     display: inline;
 }
 
@@ -16,15 +16,6 @@
     margin-top: 20px;
 }
 
-input#shorten {
-    max-width: 100%;
-    width: 200px;
-}
-
-.check-btn {
-    margin-bottom: 5px;
-}
-
 #link-availability-status {
     margin-bottom: 20px;
 }
@@ -32,3 +23,29 @@ input#shorten {
 .visibility-toggler {
     margin-bottom: 2em;
 }
+
+#shorten {
+    min-width: 300px;
+}
+
+@media (max-width: 500px) {
+    #shorten {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    #check-link-availability {
+        width: 100%;
+    }
+}
+
+/* @media (max-width: 768px) {
+    #shorten {
+        width: 100%;
+    }
+
+    #check-link-availability {
+        width: 100%;
+    }
+} */

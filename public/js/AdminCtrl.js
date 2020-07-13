@@ -136,7 +136,7 @@ polr.controller('AdminCtrl', function($scope, $compile, $timeout) {
                 "ajax": BASE_API_PATH + 'admin/get_admin_users',
 
                 "columns": [
-                    {className: 'wrap-text', data: 'name', name: 'name'},
+                    {className: 'wrap-text', data: 'username', name: 'username'},
                     {className: 'wrap-text', data: 'email', name: 'email'},
                     {data: 'created_at', name: 'created_at'},
 
@@ -155,8 +155,8 @@ polr.controller('AdminCtrl', function($scope, $compile, $timeout) {
                     {className: 'wrap-text', data: 'short_url', name: 'short_url'},
                     {className: 'wrap-text', data: 'long_url', name: 'long_url'},
                     {data: 'clicks', name: 'clicks'},
-                    {data: 'created_at', name: 'created_at'},
-                    {data: 'name', name: 'name'},
+                    {data: 'created_at', name: 'created_at', searchable: false},
+                    {data: 'username', name: 'username'},
 
                     {data: 'disable', name: 'disable', orderable: false, searchable: false},
                     {data: 'delete', name: 'delete', orderable: false, searchable: false}
@@ -253,6 +253,7 @@ polr.controller('AdminCtrl', function($scope, $compile, $timeout) {
 
         apiCall('admin/add_new_user', {
             'username': $scope.newUserParams.username,
+            'user_password': $scope.newUserParams.userPassword,
             'user_email': $scope.newUserParams.userEmail,
             'user_role': $scope.newUserParams.userRole,
         }, function(result) {
@@ -266,16 +267,14 @@ polr.controller('AdminCtrl', function($scope, $compile, $timeout) {
 
     // Delete user
     $scope.deleteUser = function($event, user_id) {
-        var delete_user_confirm = window.confirm('Are you sure you would like to delete this user?');
+        var el = $($event.target);
 
-        if (delete_user_confirm) {
-            apiCall('admin/delete_user', {
-                'user_id': user_id,
-            }, function(new_status) {
-                toastr.success('User successfully deleted.', 'Success');
-                $scope.reloadUserTables();
-            });
-        }
+        apiCall('admin/delete_user', {
+            'user_id': user_id,
+        }, function(new_status) {
+            toastr.success('User successfully deleted.', 'Success');
+            $scope.reloadUserTables();
+        });
     };
 
     $scope.changeUserRole = function(role, user_id) {
@@ -309,16 +308,14 @@ polr.controller('AdminCtrl', function($scope, $compile, $timeout) {
 
     // Delete link
     $scope.deleteLink = function($event, link_ending) {
-        var delete_link_confirm = window.confirm('Are you sure you would like to delete this link?');
+        var el = $($event.target);
 
-        if (delete_link_confirm) {
-            apiCall('admin/delete_link', {
-                'link_ending': link_ending,
-            }, function(new_status) {
-                toastr.success('Link successfully deleted.', 'Success');
-                $scope.reloadLinkTables();
-            });
-        }
+        apiCall('admin/delete_link', {
+            'link_ending': link_ending,
+        }, function(new_status) {
+            toastr.success('Link successfully deleted.', 'Success');
+            $scope.reloadLinkTables();
+        });
     };
 
     // Disable and enable links

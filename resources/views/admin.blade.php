@@ -8,22 +8,27 @@
 @section('content')
 <div ng-controller="AdminCtrl" class="ng-root">
     <div class='col-md-2'>
-        <!-- <ul class='list-group' role='tablist'> -->
         <ul class='nav nav-pills nav-stacked admin-nav' role='tablist'>
-            <!-- <li role='presentation' aria-controls="home"><a class="nav-link active" href='#home'>Home</a></li>
-            <li role='presentation' aria-controls="links"><a class="nav-link active" href='#links'>Links</a></li> -->
-            <li role='presentation' aria-controls="home" class='admin-nav-item active'><a  href='#home'>Dashboard</a></li>
-            <li role='presentation' aria-controls="links" class='admin-nav-item'><a href='#links'>Links</a></li>
-            <!-- <li role='presentation' aria-controls="home" class='list-group-item list-group-item-action active'><a  href='#home'>Dashboard</a></li>
-            <li role='presentation' aria-controls="links" class='list-group-item list-group-item-action'><a href='#links'>Links</a></li> -->
-            <!-- <li role='presentation' aria-controls="settings" class='admin-nav-item'><a href='#settings'>Settings</a></li> -->
+            <li role='presentation' aria-controls="home" class='admin-nav-item active'>
+                <a href='#home'><span class="glyphicon glyphicon-home" aria-hidden="true"></span>Home</a>
+            </li>
+            <li role='presentation' aria-controls="links" class='admin-nav-item'>
+                <a href='#links'><span class="glyphicon glyphicon-link" aria-hidden="true"></span>Links</a>
+            </li>
+            {{-- <li role='presentation' aria-controls="settings" class='admin-nav-item'>
+                <a href='#settings'>Settings</a>
+            </li> --}}
 
             @if ($role == $admin_role)
-            <li role='presentation' class='admin-nav-item'><a href='#admin'>Admin</a></li>
+            <li role='presentation' class='admin-nav-item'>
+                <a href='#admin'><span class="glyphicon glyphicon-user" aria-hidden="true"></span>Admin</a>
+            </li>
             @endif
 
             @if ($api_active == 1)
-            <li role='presentation' class='admin-nav-item'><a href='#developer'>Developer</a></li>
+            <li role='presentation' class='admin-nav-item'>
+                <a href='#developer'><span class="glyphicon glyphicon-console" aria-hidden="true"></span>Developer</a>
+            </li>
             @endif
         </ul>
     </div>
@@ -35,12 +40,13 @@
             </div>
 
             <div role="tabpanel" class="tab-pane" id="links">
+                <h3>Links</h3>
                 @include('snippets.link_table', [
                     'table_id' => 'user_links_table'
                 ])
             </div>
 
-            <!-- <div role="tabpanel" class="tab-pane" id="settings">
+            {{-- <div role="tabpanel" class="tab-pane" id="settings">
                 <h3>Change Password</h3>
                 <form action='/admin/action/change_password' method='POST'>
                     Old Password: <input class="form-control password-box" type='password' name='current_password' />
@@ -48,7 +54,7 @@
                     <input type="hidden" name='_token' value='{{csrf_token()}}' />
                     <input type='submit' class='btn btn-success change-password-btn'/>
                 </form>
-            </div> -->
+            </div> --}}
 
             @if ($role == $admin_role)
             <div role="tabpanel" class="tab-pane" id="admin">
@@ -63,14 +69,15 @@
                 <div ng-if="state.showNewUserWell" class="new-user-fields well">
                     <table class="table">
                         <tr>
-                            <th>Name</th>
+                            <th>Username</th>
+                            <th>Password</th>
                             <th>Email</th>
                             <th>Role</th>
                             <th></th>
                         </tr>
                         <tr id="new-user-form">
                             <td><input type="text" class="form-control" ng-model="newUserParams.username"></td>
-                            {{-- <td><input type="password" class="form-control" ng-model="newUserParams.userPassword"></td> --}}
+                            <td><input type="password" class="form-control" ng-model="newUserParams.userPassword"></td>
                             <td><input type="email" class="form-control" ng-model="newUserParams.userEmail"></td>
                             <td>
                                 <select class="form-control new-user-role" ng-model="newUserParams.userRole">

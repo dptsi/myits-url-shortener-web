@@ -26,7 +26,7 @@ class LinkFactory {
         return $short_url;
     }
 
-    public static function createLink($long_url, $is_secret=false, $custom_ending=null, $link_ip='127.0.0.1', $creator=false, $return_object=false, $is_api=false) {
+    public static function createLink($long_url, $is_secret=false, $custom_ending=null, $link_ip='127.0.0.1', $creator_id=false, $return_object=false, $is_api=false) {
         /**
         * Given parameters needed to create a link, generate appropriate ending and
         * return formatted link.
@@ -35,7 +35,7 @@ class LinkFactory {
         * @param boolean (optional) $is_secret
         * @param string (optional) $custom_ending
         * @param string $link_ip
-        * @param string $creator
+        * @param string $creator_id
         * @param bool $return_object
         * @param bool $is_api
         * @return string $formatted_link
@@ -55,10 +55,10 @@ class LinkFactory {
                 looks like a shortened URL.');
         }
 
-        if (!$is_secret && (!isset($custom_ending) || $custom_ending === '') && (LinkHelper::longLinkExists($long_url, $creator) !== false)) {
+        if (!$is_secret && (!isset($custom_ending) || $custom_ending === '') && (LinkHelper::longLinkExists($long_url, $creator_id) !== false)) {
             // if link is not specified as secret, is non-custom, and
             // already exists in Polr, lookup the value and return
-            $existing_link = LinkHelper::longLinkExists($long_url, $creator);
+            $existing_link = LinkHelper::longLinkExists($long_url, $creator_id);
             return self::formatLink($existing_link);
         }
 
@@ -66,13 +66,13 @@ class LinkFactory {
             // has custom ending
             $ending_conforms = LinkHelper::validateEnding($custom_ending);
             if (!$ending_conforms) {
-                throw new \Exception('Custom endings
+                throw new \Exception('Sorry, but custom endings
                     can only contain alphanumeric characters, hyphens, and underscores.');
             }
 
             $ending_in_use = LinkHelper::linkExists($custom_ending);
             if ($ending_in_use) {
-                throw new \Exception('This URL ending is already in use.');
+                throw new \Exception('Sorry, but this URL ending is already in use.');
             }
 
             $link_ending = $custom_ending;
@@ -96,8 +96,9 @@ class LinkFactory {
 
         $link->is_api    = $is_api;
 
-        if ($creator) {
-            $link->user_id = $creator;
+        if ($creator_id) {
+            // if user is logged in, save user as creator
+            $link->user_id = $creator_id;
         }
 
         if ($is_secret) {
@@ -107,6 +108,7 @@ class LinkFactory {
         }
         else {
             $secret_key = false;
+            $link->secret_key = '';
         }
 
         $link->save();

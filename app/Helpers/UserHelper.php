@@ -5,7 +5,6 @@ use App\Factories\UserFactory;
 use App\Models\User;
 use App\Helpers\CryptoHelper;
 use Hash;
-use Illuminate\Http\Request;
 
 class UserHelper {
     public static $USER_ROLES = [
@@ -35,32 +34,8 @@ class UserHelper {
         return (self::getUserByUsername($username)->role == self::$USER_ROLES['admin']);
     }
 
-    public static function registerUser(Request $request) {
-        // register the user to the database
-        // for the first time logged in
-        $username = session('username');
-        $user_id  = session('user_id');
-        $email    = session('email');
-        // $email    = 'dummy@mail.com';
-        $ip = $request->ip();
-
-        $user = UserFactory::createUserWithSub(
-            $username,
-            $user_id,
-            $email,
-            1,
-            $ip
-        );
-    }
-
-    public static function loginUser($sub, $username, $email){
-        $user = User::where('user_id', $sub)
-                    ->where('name', $username)
-                    ->update(['email' => $email]);
-    }
-
     public static function isUserExist($sub, $username) {
-        $user = User::where('user_id', $sub)->where('name', $username)->first();
+        $user = User::where('sso_id', $sub)->where('username', $username)->first();
 
         if (!$user) {
             return false;
@@ -68,6 +43,31 @@ class UserHelper {
         else {
             return true;
         }
+    }
+
+    public static function registerUser($sso_id, $username, $email) {
+        $user = UserFactory::createUserWithSub(
+            $sso_id,
+            $username,
+            $email,
+            1
+        );
+    }
+
+    public static function getUserRole($sso_id) {
+        $role = self::getUserBySSOid($sso_id)->role;
+        return $role;
+    }
+
+    public static function getUserID($sso_id) {
+        $user_id = self::getUserBySSOid($sso_id)->id;
+        return $user_id;
+    }
+
+    public static function checkIdentity($sso_id, $username, $email) {
+        $user = User::where('sso_id', $sso_id)
+            ->where('username', $username)
+            ->update(['email' => $email]);
     }
 
     public static function checkCredentials($username, $password) {
@@ -135,10 +135,14 @@ class UserHelper {
     }
 
     public static function getUserByUsername($username, $inactive=false) {
-        return self::getUserBy('name', $username, $inactive);
+        return self::getUserBy('username', $username, $inactive);
     }
 
     public static function getUserByEmail($email, $inactive=false) {
         return self::getUserBy('email', $email, $inactive);
+    }
+
+    public static function getUserBySSOid($sso_id, $inactive=false) {
+        return self::getUserBy('sso_id', $sso_id, $inactive);
     }
 }

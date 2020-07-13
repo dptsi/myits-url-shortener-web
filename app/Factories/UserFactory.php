@@ -16,12 +16,12 @@ class UserFactory {
         $recovery_key = CryptoHelper::generateRandomHex(50);
 
         $user = new User;
-        $user->name = $username;
-        // $user->password = $hashed_password;
+        $user->username = $username;
+        $user->password = $hashed_password;
         $user->email = $email;
-        // $user->recovery_key = $recovery_key;
+        $user->recovery_key = $recovery_key;
         $user->active = $active;
-        // $user->ip = $ip;
+        $user->ip = $ip;
         $user->role = $role;
         $user->api_key = $api_key;
         $user->api_active = $api_active;
@@ -31,27 +31,22 @@ class UserFactory {
     }
 
     public static function createUserWithSub(
+        $sso_id,
         $username,
-        $user_id,
         $email,
         $active=0,
-        $ip='127.0.0.1',
         $api_key=false,
         $api_active=0
     )
     {
         $role = UserHelper::$USER_ROLES['default'];
 
+        // create new user
         $user = new User;
-
-        // assign the fields
-        $user->name = $username;
-        $user->user_id = $user_id;
-        // $user->password = $hashedPassword;
+        $user->username = $username;
+        $user->sso_id = $sso_id;
         $user->email = $email;
-        // $user->recovery_key = $recoveryKey;
         $user->active = $active;
-        // $user->ip = $ip;
         $user->role = $role;
         $user->api_key = $api_key;
         $user->api_active = $api_active;
@@ -59,5 +54,4 @@ class UserFactory {
         $user->save();
         return $user;
     }
-
 }

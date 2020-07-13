@@ -22,7 +22,6 @@ class IndexController extends Controller {
             return redirect()->route('login', $request->all());
         }
         
-        // These setting can be ignored
         if (env('POLR_SETUP_RAN') != true) {
             return redirect(route('setup'));
         }

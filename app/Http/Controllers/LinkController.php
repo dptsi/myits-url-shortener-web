@@ -8,6 +8,7 @@ use App\Factories\LinkFactory;
 use App\Helpers\CryptoHelper;
 use App\Helpers\LinkHelper;
 use App\Helpers\ClickHelper;
+use App\Helpers\UserHelper;
 
 class LinkController extends Controller {
     /**
@@ -34,11 +35,12 @@ class LinkController extends Controller {
         $long_url = $request->input('link-url');
         $custom_ending = $request->input('custom-ending');
         $is_secret = ($request->input('options') == "s" ? true : false);
-        $creator = session('user_id');
+        $creator = session('username');
+        $creator_id = UserHelper::getUserID( session('sso_id') );
         $link_ip = $request->ip();
 
         try {
-            $short_url = LinkFactory::createLink($long_url, $is_secret, $custom_ending, $link_ip, $creator);
+            $short_url = LinkFactory::createLink($long_url, $is_secret, $custom_ending, $link_ip, $creator_id);
         }
         catch (\Exception $e) {
             return self::renderError($e->getMessage());

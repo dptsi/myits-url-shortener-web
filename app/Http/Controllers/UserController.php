@@ -29,10 +29,15 @@ class UserController extends Controller {
     }
 
     public function performLogoutUser(Request $request) {
-        $request->session()->forget('username');
-        $request->session()->forget('role');
-        
-        return redirect()->route('logoutuser');
+        // $request->session()->forget('username');
+        $request->session()->forget([
+            'username',
+            'sso_id',
+            'email',
+            'role',
+            'user_id'
+        ]);
+        return redirect()->route('logout_oidc');
     }
 
     public function performLogin(Request $request) {
@@ -57,18 +62,6 @@ class UserController extends Controller {
     public function performSignup(Request $request) {
         if (env('POLR_ALLOW_ACCT_CREATION') == false) {
             return redirect(route('index'))->with('error', 'Sorry, but registration is disabled.');
-        }
-
-        if (env('POLR_ACCT_CREATION_RECAPTCHA')) {
-            // Verify reCAPTCHA if setting is enabled
-            $gRecaptchaResponse = $request->input('g-recaptcha-response');
-
-            $recaptcha = new \ReCaptcha\ReCaptcha(env('POLR_RECAPTCHA_SECRET_KEY'));
-            $recaptcha_resp = $recaptcha->verify($gRecaptchaResponse, $request->ip());
-
-            if (!$recaptcha_resp->isSuccess()) {
-                return redirect(route('signup'))->with('error', 'You must complete the reCAPTCHA to register.');
-            }
         }
 
         // Validate signup form data

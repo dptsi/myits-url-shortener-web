@@ -37,7 +37,7 @@ input.api-quota {
     display: inline;
     width: 9em;
     font-size: .85em;
-    height: auto;
+    height: .85em;
     padding-left: 0.8em;
 }
 
@@ -49,6 +49,10 @@ input.api-quota {
     table {
         table-layout: fixed;
     }
+}
+
+a span.glyphicon {
+    margin-right: 10px;
 }
 
 a.new-user-add {

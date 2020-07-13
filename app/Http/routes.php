@@ -15,22 +15,20 @@ if (env('POLR_ALLOW_ACCT_CREATION')) {
 /* GET endpoints */
 
 $app->get('/', ['as' => 'index', 'uses' => 'IndexController@showIndexPage']);
-// $app->get('/logout', ['as' => 'logout', 'uses' => 'UserController@performLogoutUser']);
-$app->get('/logoutuser', ['as' => 'logoutuser', 'uses' => 'OpenidController@performLogout']);
 $app->get('/logout', ['as' => 'logout', 'uses' => 'UserController@performLogoutUser']);
-// $app->get('/login', ['as' => 'login', 'uses' => 'UserController@displayLoginPage']);
+$app->get('/logout_oidc', ['as' => 'logout_oidc', 'uses' => 'OpenidController@performLogout']);
 $app->get('/login', ['as' => 'login', 'uses' => 'OpenidController@performLogin']);
 $app->get('/about-polr', ['as' => 'about', 'uses' => 'StaticPageController@displayAbout']);
 
-// $app->get('/lost_password', ['as' => 'lost_password', 'uses' => 'UserController@displayLostPasswordPage']); // unused
-// $app->get('/activate/{username}/{recovery_key}', ['as' => 'activate', 'uses' => 'UserController@performActivation']); // unused
-// $app->get('/reset_password/{username}/{recovery_key}', ['as' => 'reset_password', 'uses' => 'UserController@performPasswordReset']); // unused
+$app->get('/lost_password', ['as' => 'lost_password', 'uses' => 'UserController@displayLostPasswordPage']);
+$app->get('/activate/{username}/{recovery_key}', ['as' => 'activate', 'uses' => 'UserController@performActivation']);
+$app->get('/reset_password/{username}/{recovery_key}', ['as' => 'reset_password', 'uses' => 'UserController@performPasswordReset']);
 
 $app->get('/admin', ['as' => 'admin', 'uses' => 'AdminController@displayAdminPage']);
 
-// $app->get('/setup', ['as' => 'setup', 'uses' => 'SetupController@displaySetupPage']); // unused
-// $app->post('/setup', ['as' => 'psetup', 'uses' => 'SetupController@performSetup']); // unused
-// $app->get('/setup/finish', ['as' => 'setup_finish', 'uses' => 'SetupController@finishSetup']); // unused
+$app->get('/setup', ['as' => 'setup', 'uses' => 'SetupController@displaySetupPage']);
+$app->post('/setup', ['as' => 'psetup', 'uses' => 'SetupController@performSetup']);
+$app->get('/setup/finish', ['as' => 'setup_finish', 'uses' => 'SetupController@finishSetup']);
 
 $app->get('/{short_url}', ['uses' => 'LinkController@performRedirect']);
 $app->get('/{short_url}/{secret_key}', ['uses' => 'LinkController@performRedirect']);
@@ -41,10 +39,10 @@ $app->get('/admin/stats/{short_url}', ['uses' => 'StatsController@displayStats']
 
 // $app->post('/login', ['as' => 'plogin', 'uses' => 'UserController@performLogin']);
 $app->post('/shorten', ['as' => 'pshorten', 'uses' => 'LinkController@performShorten']);
-// $app->post('/lost_password', ['as' => 'plost_password', 'uses' => 'UserController@performSendPasswordResetCode']);
+$app->post('/lost_password', ['as' => 'plost_password', 'uses' => 'UserController@performSendPasswordResetCode']);
 // $app->post('/reset_password/{username}/{recovery_key}', ['as' => 'preset_password', 'uses' => 'UserController@performPasswordReset']);
 
-// $app->post('/admin/action/change_password', ['as' => 'change_password', 'uses' => 'AdminController@changePassword']);
+$app->post('/admin/action/change_password', ['as' => 'change_password', 'uses' => 'AdminController@changePassword']);
 
 $app->group(['prefix' => '/api/v2', 'namespace' => 'App\Http\Controllers'], function ($app) {
     /* API internal endpoints */
