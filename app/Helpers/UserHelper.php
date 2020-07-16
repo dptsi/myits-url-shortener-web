@@ -12,6 +12,10 @@ class UserHelper {
         'default'  => '',
     ];
 
+    public static $SSO_USER_ROLES_ID = [
+        'admin' => 22
+    ];
+
     public static function userExists($username) {
         /* XXX: used primarily with test cases */
 
@@ -45,11 +49,12 @@ class UserHelper {
         }
     }
 
-    public static function registerUser($sso_id, $username, $email) {
+    public static function registerUser($sso_id, $username, $email, $role) {
         $user = UserFactory::createUserWithSub(
             $sso_id,
             $username,
             $email,
+            $role,
             1
         );
     }
@@ -64,10 +69,10 @@ class UserHelper {
         return $user_id;
     }
 
-    public static function checkIdentity($sso_id, $username, $email) {
+    public static function checkIdentity($sso_id, $username, $email, $role) {
         $user = User::where('sso_id', $sso_id)
             ->where('username', $username)
-            ->update(['email' => $email]);
+            ->update(['email' => $email, 'role' => $role]);
     }
 
     public static function checkCredentials($username, $password) {

@@ -34,12 +34,12 @@ class UserFactory {
         $sso_id,
         $username,
         $email,
+        $role,
         $active=0,
         $api_key=false,
         $api_active=0
     )
     {
-        $role = UserHelper::$USER_ROLES['default'];
 
         // create new user
         $user = new User;

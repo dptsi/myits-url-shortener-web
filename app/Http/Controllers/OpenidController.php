@@ -1,5 +1,7 @@
 <?php
 namespace App\Http\Controllers;
+
+use App\Helpers\AdminHelper;
 use Illuminate\Http\Request;
 use App\Helpers\CryptoHelper;
 use App\Helpers\UserHelper;
@@ -72,9 +74,11 @@ class OpenidController extends Controller
      * 
      */
     public function makeUserLoggedIn(Request $request) {
-        $userInfo = $_SESSION['user_info'];
-        $username = $userInfo->name;
-        $ssoId    = $userInfo->sub;
+        $userInfo = $_SESSION['user_info']; // object
+        $username = $userInfo->name; // string
+        $role     = ''; // string
+        $ssoId    = $userInfo->sub; // string
+        $ssoRole  = $userInfo->role; // array
         
         // check for user email
         if ( is_null($userInfo->email) ) {
@@ -89,17 +93,38 @@ class OpenidController extends Controller
             $email = $userInfo->email;
         }
 
+        // try to find administrator role if exist
+        foreach ($ssoRole as $eachRole) {
+            $ssoAdminRoleID = UserHelper::$SSO_USER_ROLES_ID['admin'];
+            //
+            if ($eachRole->role_id == $ssoAdminRoleID) {
+                $role = UserHelper::$USER_ROLES['admin'];
+                $expiredTime = $eachRole->expired_at;
+                break;
+            }
+        }
+
+        // check the expired date of user role
+        // if it is expires, then the user is not admin
+        if ($role == UserHelper::$USER_ROLES['admin']) {
+            // if there is an expiration date (not null), check whether it is expired
+            if ( is_null($expiredTime) == false) {
+                if ( AdminHelper::isDateExpired($expiredTime) )  {
+                    $role = UserHelper::$USER_ROLES['default'];
+                }
+            }
+        }
+
         // if the user is logged in for the first time
         // then insert to the DB
         if ( !UserHelper::isUserExist($ssoId, $username) ) {
-            UserHelper::registerUser($ssoId, $username, $email);
+            UserHelper::registerUser($ssoId, $username, $email, $role);
         }
-        // else, the user have logged in. check the email
+        // else, the user have logged in. check the email and the role
         else {
-            UserHelper::checkIdentity($ssoId, $username, $email);
+            UserHelper::checkIdentity($ssoId, $username, $email, $role);
         }
 
-        // check user role
         $role = UserHelper::getUserRole($ssoId);
         $user_id = UserHelper::getUserID($ssoId);
 
