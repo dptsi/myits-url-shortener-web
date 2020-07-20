@@ -93,6 +93,7 @@
                     </table>
                 </div> -->
 
+                <h3>Users</h3>
                 @include('snippets.user_table', [
                     'table_id' => 'admin_users_table'
                 ])
