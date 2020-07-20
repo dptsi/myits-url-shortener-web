@@ -63,7 +63,7 @@
                     'table_id' => 'admin_links_table'
                 ])
 
-                <h3 class="users-heading">Users</h3>
+                <!-- <h3 class="users-heading">Users</h3>
                 <a ng-click="state.showNewUserWell = !state.showNewUserWell" class="btn btn-primary btn-sm status-display">New</a>
 
                 <div ng-if="state.showNewUserWell" class="new-user-fields well">
@@ -91,7 +91,7 @@
                             </td>
                         </tr>
                     </table>
-                </div>
+                </div> -->
 
                 @include('snippets.user_table', [
                     'table_id' => 'admin_users_table'
