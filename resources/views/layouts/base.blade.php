@@ -28,6 +28,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <meta name="generator" content="Polr {{env('POLR_VERSION')}}" />
     @yield('meta')
 
+    {{-- Favicon --}}
+    <link rel="shortcut icon" href="/img/favicon-web.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-web.png">
+
     {{-- Load Stylesheets --}}
     @if (env('APP_STYLESHEET'))
     <link rel="stylesheet" href="{{env('APP_STYLESHEET')}}">
