@@ -63,22 +63,26 @@ class OpenidController extends Controller
             $_SESSION['user_info'] = $oidc->requestUserInfo();
         }
         catch (OpenIDConnectClientException $e) {
-            echo $e->getMessage();
+            if (env('APP_DEBUG') == true)  {
+                echo $e->getMessage();
+            }
         }
         
-        $this->makeUserLoggedIn($request);
+        $this->makeUserLoggedIn();
         return redirect()->route('index');
     }
 
     /**
      * 
      */
-    public function makeUserLoggedIn(Request $request) {
+    public function makeUserLoggedIn() {
         $userInfo = $_SESSION['user_info']; // object
-        $username = $userInfo->name; // string
-        $role     = ''; // string
-        $ssoId    = $userInfo->sub; // string
-        $ssoRole  = $userInfo->role; // array
+        $username = $userInfo->name;    // string
+        $role     = '';                 // string
+        $group    = '';                 // string
+        $ssoId    = $userInfo->sub;     // string
+        $ssoRole  = $userInfo->role;    // array of object
+        $ssoGroup = $userInfo->group;   // array of object
         
         // check for user email
         if ( is_null($userInfo->email) ) {
@@ -115,6 +119,29 @@ class OpenidController extends Controller
             }
         }
 
+        // try to find the group of this user
+        // store them to a list
+        $obtainedGroup = [];
+        foreach ($ssoGroup as $eachGroup) {
+            array_push($obtainedGroup, $eachGroup->group_name);
+        }
+        // determine the group (student vs non-student e.g Dosen, Tendik, Pegawai etc.)
+        $isStudent = in_array(UserHelper::$ROLE_GROUP['mahasiswa'], $obtainedGroup);
+        if ($isStudent) {
+            // obviously, if the user is a student, note the group as student
+            $group = UserHelper::$ROLE_GROUP['mahasiswa'];
+        }
+        else {
+            foreach ($obtainedGroup as $seeGroup) {
+                // assumption: each user is only given two group_name
+                // the first non-"everyone" group_name will be taken
+                if ($seeGroup != UserHelper::$ROLE_GROUP['everyone']) {
+                    $group = $seeGroup;
+                    break;
+                }
+            }
+        }
+
         // if the user is logged in for the first time
         // then insert to the DB
         if ( !UserHelper::isUserExist($ssoId, $username) ) {
@@ -128,11 +155,16 @@ class OpenidController extends Controller
         $role = UserHelper::getUserRole($ssoId);
         $user_id = UserHelper::getUserID($ssoId);
 
-        $request->session()->put('username', $username);
-        $request->session()->put('sso_id', $ssoId);
-        $request->session()->put('email', $email);
-        $request->session()->put('role', $role);
-        $request->session()->put('user_id', $user_id);
+        // set the required sessions to be used
+        // later throughout this application
+        session([
+            'username' => $username,
+            'sso_id' => $ssoId,
+            'email' => $email,
+            'role' => $role,
+            'user_id' => $user_id,
+            'role_group' => $group
+        ]);
     }
 
     /**
@@ -162,7 +194,9 @@ class OpenidController extends Controller
             }
         }
         catch (OpenIDConnectClientException $e) {
-            echo $e->getMessage();
+            if (env('APP_DEBUG') == true)  {
+                echo $e->getMessage();
+            }
         }
     }
 }
