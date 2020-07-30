@@ -16,6 +16,28 @@ class UserHelper {
         'admin' => 22
     ];
 
+    public static $SSO_GROUP_ID = [
+        'everyone' => 1,
+        'mahasiswa' => 2,
+        'pegawai' => 3,
+        'dosen' => 4,
+        'tendik' => 5,
+        'wali' => 6,
+        'eksternal' => 7,
+        'alumni' => 8
+    ];
+
+    public static $ROLE_GROUP = [
+        'everyone' => 'Everyone',
+        'mahasiswa' => 'Mahasiswa',
+        'pegawai' => 'Pegawai',
+        'dosen' => 'Dosen',
+        'tendik' => 'Tendik',
+        'wali' => 'Wali',
+        'eksternal' => 'Eksternal',
+        'alumni' => 'Alumni'
+    ];
+
     public static function userExists($username) {
         /* XXX: used primarily with test cases */
 

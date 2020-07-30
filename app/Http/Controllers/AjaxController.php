@@ -18,6 +18,10 @@ class AjaxController extends Controller {
         $link_ending = $request->input('link_ending');
         $ending_conforms = LinkHelper::validateEnding($link_ending);
 
+        if (session('role_group') == UserHelper::$ROLE_GROUP['mahasiswa']) {
+            $link_ending = 'm/' . $link_ending;
+        }
+
         if (!$ending_conforms) {
             return "invalid";
         }

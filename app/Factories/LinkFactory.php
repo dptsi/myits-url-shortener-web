@@ -4,7 +4,7 @@ namespace App\Factories;
 use App\Models\Link;
 use App\Helpers\CryptoHelper;
 use App\Helpers\LinkHelper;
-
+use App\Helpers\UserHelper;
 
 class LinkFactory {
     const MAXIMUM_LINK_LENGTH = 65535;
@@ -58,8 +58,22 @@ class LinkFactory {
         if (!$is_secret && (!isset($custom_ending) || $custom_ending === '') && (LinkHelper::longLinkExists($long_url, $creator_id) !== false)) {
             // if link is not specified as secret, is non-custom, and
             // already exists in Polr, lookup the value and return
-            $existing_link = LinkHelper::longLinkExists($long_url, $creator_id);
-            return self::formatLink($existing_link);
+            
+            // if the user is student, do check the existing link
+            // with "m/" prefix
+            if (session('role_group') == UserHelper::$ROLE_GROUP['mahasiswa']) {
+                $existing_link = LinkHelper::longLinkExists($long_url, $creator_id);
+                
+                // ensure that existing link prefixed with 'm/'
+                if (strpos($existing_link, 'm/') !== false) {
+                    return self::formatLink($existing_link);
+                }
+            }
+            // otherwise, the user is not student
+            else {
+                $existing_link = LinkHelper::longLinkExists($long_url, $creator_id);
+                return self::formatLink($existing_link);
+            }
         }
 
         if (isset($custom_ending) && $custom_ending !== '') {
@@ -70,7 +84,13 @@ class LinkFactory {
                     can only contain alphanumeric characters, hyphens, and underscores.');
             }
 
-            $ending_in_use = LinkHelper::linkExists($custom_ending);
+            if (session('role_group') == UserHelper::$ROLE_GROUP['mahasiswa']) {
+                $ending_in_use = LinkHelper::linkExists('m/' . $custom_ending);
+            }
+            else {
+                $ending_in_use = LinkHelper::linkExists($custom_ending);
+            }
+
             if ($ending_in_use) {
                 throw new \Exception('Sorry, but this URL ending is already in use.');
             }
@@ -86,6 +106,10 @@ class LinkFactory {
                 // generate a counter-based ending or use existing ending if possible
                 $link_ending = LinkHelper::findSuitableEnding();
             }
+        }
+
+        if (session('role_group') == UserHelper::$ROLE_GROUP['mahasiswa']) {
+            $link_ending = 'm/' . $link_ending;
         }
 
         $link = new Link;
