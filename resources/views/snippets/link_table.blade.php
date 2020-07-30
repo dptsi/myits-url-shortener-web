@@ -3,7 +3,7 @@
         <tr>
             <th>Link Ending</th>
             <th>Long Link</th>
-            <th>Clicks</th>
+            <th>Visited</th>
             <th>Date</th>
             @if ($table_id == "admin_links_table")
             {{-- Show action buttons only if admin view --}}
