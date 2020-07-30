@@ -30,7 +30,9 @@
     <div class="form-inline">
         <div class="form-group">
             <div class="input-group">
-                <div class="input-group-addon"><strong>{{env('APP_ADDRESS')}}/</strong></div>
+                <div class="input-group-addon">
+                    <strong>{{env('APP_ADDRESS')}}/@if (session('role_group') == 'Mahasiswa')m/@endif</strong>
+                </div>
                 <input type='text' placeholder="your custom URL" autocomplete="off" class='form-control custom-url-field' name='custom-ending' />
             </div>
         </div>
