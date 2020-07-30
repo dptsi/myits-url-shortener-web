@@ -124,6 +124,10 @@ class AdminPaginationController extends Controller {
         </a>';
     }
 
+    public function formatDateTime($link) {
+        return date('d-m-Y H:i', strtotime($link->created_at));
+    }
+
     /* DataTables bindings */
 
     public function paginateAdminUsers(Request $request) {
@@ -158,6 +162,7 @@ class AdminPaginationController extends Controller {
             ->addColumn('delete', [$this, 'renderDeleteLinkCell'])
             ->editColumn('clicks', [$this, 'renderClicksCell'])
             ->editColumn('long_url', [$this, 'renderLongUrlCell'])
+            ->editColumn('created_at', [$this, 'formatDateTime'])
             ->escapeColumns(['short_url', 'username'])
             ->make(true);
     }
@@ -173,6 +178,7 @@ class AdminPaginationController extends Controller {
         return Datatables::of($user_links)
             ->editColumn('clicks', [$this, 'renderClicksCell'])
             ->editColumn('long_url', [$this, 'renderLongUrlCell'])
+            ->editColumn('created_at', [$this, 'formatDateTime'])
             ->escapeColumns(['short_url'])
             ->make(true);
     }
