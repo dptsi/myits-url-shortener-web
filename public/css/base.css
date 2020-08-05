@@ -1,5 +1,8 @@
+/* Here are the custom styling overriding the default styling */
+
 body {
     padding-top: 60px;
+    background-color: #f2f5f5;
 }
 
 .login-dropdown-menu {
@@ -74,7 +77,7 @@ body {
 
 .form-control:focus {
     box-shadow: 0 0 36px #d8dde5;
-    border-color: #a8a8a8;
+    border-color: #00b7ff;
 }
 
 .navbar-default .navbar-nav > .open > a, 
@@ -110,6 +113,33 @@ body {
 .navbar-default .navbar-nav > li > a:focus
 {
     background-color: #002555;
+}
+
+.nav > li > a:hover {
+    background-color: #f8f9f9;
+}
+
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus
+{
+    color: #fff;
+    background-color: #013880;
+    border-color: #013880;
+}
+
+.page-header {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+a {
+    color: #0074a1;
+}
+
+a:hover, a:focus {
+    color: #0074a1;
+    text-decoration: underline;
 }
 
 @media (min-width: 768px) {

@@ -62,3 +62,15 @@ a.new-user-add {
 .edit-long-link-btn {
     opacity: 0.45;
 }
+
+a.btn.delete-button-custom {
+    background-color: #fff;
+    border: 1px solid #c9302c;
+    color: #c9302c;
+}
+
+a.btn.delete-button-custom:hover {
+    background-color: #c9302c;
+    border: 1px solid #c9302c;
+    color: #fff;
+}

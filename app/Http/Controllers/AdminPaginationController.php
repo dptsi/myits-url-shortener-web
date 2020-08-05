@@ -47,7 +47,7 @@ class AdminPaginationController extends Controller {
     public function renderDeleteLinkCell($link) {
         // Add "Delete" action button
         return '<a ng-click="deleteLink($event, \'' . e($link->short_url)  . '\')"
-            class="btn btn-sm btn-warning delete-link">
+            class="btn btn-sm btn-default delete-link delete-button-custom">
             Delete
         </a>';
     }
