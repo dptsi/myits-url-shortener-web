@@ -104,7 +104,13 @@ class LinkHelper {
         while ($in_use) {
             // Generate a new string until the ending is not in use
             $pr_str = str_random(env('_PSEUDO_RANDOM_KEY_LENGTH'));
-            $in_use = LinkHelper::linkExists($pr_str);
+            
+            if (session('role_group') == UserHelper::$ROLE_GROUP['mahasiswa']) {
+                $in_use = LinkHelper::linkExists('m/' . $pr_str);
+            }
+            else {
+                $in_use = LinkHelper::linkExists($pr_str);
+            }
         }
 
         return $pr_str;

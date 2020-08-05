@@ -50,6 +50,15 @@ class LinkController extends Controller {
     }
 
     public function performRedirect(Request $request, $short_url, $secret_key=false) {
+        $uri = $request->url();
+        // check whether the url is student redirect ('/m/') ?
+        $checkStudentURI = strpos($uri, env('BASE_URI') . '/m/');
+
+        // if it is student redirect, append "m/" to the front of short url
+        if ($checkStudentURI !== false) {
+            $short_url = 'm/' . $short_url;
+        }
+        
         $link = Link::where('short_url', $short_url)
             ->first();
 
