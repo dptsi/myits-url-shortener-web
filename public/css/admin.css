@@ -74,3 +74,38 @@ a.btn.delete-button-custom:hover {
     border: 1px solid #c9302c;
     color: #fff;
 }
+
+.pagination > li > a {
+	z-index: 2;
+	color: #000;
+	background-color: #dfdfdf;
+	border-color: #949494;
+	cursor: default;
+}
+
+.pagination > li > a:hover,
+.pagination > .active > a,
+.pagination > .active > a:hover,
+.pagination > .active > a:focus {
+    background-color: #013880;
+    border-color: #013880;
+    color: #fff;
+}
+
+.nav > li > a:hover {
+    background-color: #f8f9f9;
+}
+
+.nav-pills > li > a:hover,
+.nav-pills > li > a:focus {
+    color: #013880;
+}
+
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus
+{
+    color: #fff;
+    background-color: #013880;
+    border-color: #013880;
+}

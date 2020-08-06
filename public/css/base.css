@@ -115,19 +115,6 @@ body {
     background-color: #002555;
 }
 
-.nav > li > a:hover {
-    background-color: #f8f9f9;
-}
-
-.nav-pills > li.active > a,
-.nav-pills > li.active > a:hover,
-.nav-pills > li.active > a:focus
-{
-    color: #fff;
-    background-color: #013880;
-    border-color: #013880;
-}
-
 .page-header {
     margin-top: 0;
     margin-bottom: 0;

@@ -362,6 +362,7 @@ polr.controller('AdminCtrl', function($scope, $compile, $timeout) {
         $('.admin-nav a').click(function(e) {
             e.preventDefault();
             $(this).tab('show');
+            console.log(document.location.toString());
         });
         $scope.syncHash();
 

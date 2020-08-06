@@ -4,7 +4,7 @@
             <th>Link Ending</th>
             <th>Long Link</th>
             <th>Visited</th>
-            <th>Date</th>
+            <th>Created At</th>
             @if ($table_id == "admin_links_table")
             {{-- Show action buttons only if admin view --}}
             <th>Creator</th>

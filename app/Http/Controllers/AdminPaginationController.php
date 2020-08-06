@@ -39,7 +39,7 @@ class AdminPaginationController extends Controller {
         if (session('username') === $user->username) {
             $btn_class = 'disabled';
         }
-        return '<a ng-click="deleteUser($event, \''. $user->id .'\')" class="btn btn-sm btn-danger ' . $btn_class . '">
+        return '<a ng-click="deleteUser($event, \''. $user->id .'\')" class="btn btn-sm btn-danger ' . $btn_class . ' delete-button-custom">
             Delete
         </a>';
     }
@@ -125,7 +125,7 @@ class AdminPaginationController extends Controller {
     }
 
     public function formatDateTime($link) {
-        return date('d-m-Y H:i', strtotime($link->created_at));
+        return date('d M Y, H:i', strtotime($link->created_at));
     }
 
     /* DataTables bindings */
@@ -139,6 +139,7 @@ class AdminPaginationController extends Controller {
             ->addColumn('toggle_active', [$this, 'renderToggleUserActiveCell'])
             ->addColumn('change_role', [$this, 'renderChangeUserRoleCell'])
             ->addColumn('delete', [$this, 'renderDeleteUserCell'])
+            ->editColumn('created_at', [$this, 'formatDateTime'])
             ->escapeColumns(['username', 'email'])
             ->make(true);
     }
