@@ -10,8 +10,8 @@ class IndexController extends Controller {
      * @return Response
      */
     public function showIndexPage(Request $request) {
-        
-        session_start();
+        //Adetiya Bagus Nusantara
+        //session_start();
 
         // Authenticate here
         // redirect to MyITS SSO if not logged in
