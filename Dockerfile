@@ -4,6 +4,4 @@ FROM dptsi/laravel-web-dev:7.3
 COPY src /var/www/html/
 
 # Install required packages
-RUN composer install && composer require illuminate/redis:* --with-all-dependencies
-
-USER root
+RUN composer require illuminate/redis:* --with-all-dependencies && chmod -R ugo+rw .
