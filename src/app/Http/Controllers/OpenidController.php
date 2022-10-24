@@ -172,7 +172,10 @@ class OpenidController extends Controller
      */
     public function performLogout(Request $request) {
         try {
-            session_start();
+            if(!isset($_SESSION)) 
+            { 
+                session_start(); 
+            }
             $redirect = env('OIDC_POST_LOGOUT_URI');
 
             if ( isset($_SESSION['id_token']) ) {
