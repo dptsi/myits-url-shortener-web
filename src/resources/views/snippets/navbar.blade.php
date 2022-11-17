@@ -11,7 +11,7 @@
         <!-- Output sign in/sign out buttons appropriately -->
         
             <div class="navbar-header">
-                <a class="navbar-brand" href="{{ route('index') }}">
+                <a class="navbar-brand" href="https://shortener.its.ac.id">
                     <!-- <img src="http://placehold.it/150x50?text=Logo" alt=""> -->
                     <!-- <img src="https://drive.google.com/drive/folders/16h810-87gV-4Qn9XFaNhYJ8BePHfMCMr?usp=sharing" alt=""> -->
                     
