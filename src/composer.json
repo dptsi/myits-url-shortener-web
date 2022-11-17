@@ -16,7 +16,8 @@
         "nesbot/carbon": "^1.22",
         "doctrine/dbal": "^2.5",
         "google/recaptcha": "~1.1",
-        "myits/openid-connect-client": "*"
+        "myits/openid-connect-client": "*",
+        "illuminate/redis": "*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.0",
@@ -37,6 +38,9 @@
         ]
     },
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "kylekatarnls/update-helper": true
+        }
     }
 }

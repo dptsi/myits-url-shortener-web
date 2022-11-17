@@ -41,7 +41,7 @@ class AdminController extends Controller {
 
     public function changePassword(Request $request) {
         if (!$this->isLoggedIn()) {
-            return abort(404);
+            return view('errors.404');
         }
 
         $username = session('username');

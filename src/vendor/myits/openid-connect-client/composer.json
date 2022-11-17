@@ -1,0 +1,22 @@
+{
+    "name": "myits/openid-connect-client",
+    "description": "Package for connect to myITS SSO",
+    "type": "library",
+    "require": {
+        "php": ">=5.4",
+        "phpseclib/phpseclib": "~2.0",
+        "ext-json": "*",
+        "ext-curl": "*"
+    },
+    "license": "Apache-2.0",
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": { "Its\\Sso\\": "src/" }  
+    },
+    "authors": [
+        {
+            "name": "DPTSI ITS",
+            "email": "mobile@its.ac.id"
+        }
+    ]
+}

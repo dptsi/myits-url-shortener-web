@@ -1,0 +1,23 @@
+version: '3'
+services:
+
+    myits-url-shortener-web:
+        container_name: myits-url-shortener-web
+        image: dptsi/laravel-web-dev:7.3
+        volumes:
+            - ./src:/var/www/html
+        environment:
+            - VIRTUAL_HOST=shortener.its.ac.id
+            - VIRTUAL_PORT=8080
+            - SELF_SIGNED_HOST=shortener.its.ac.id
+        dns:
+            - 202.46.129.2
+            - 202.46.129.3
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        networks:
+            - nginx-proxy-network
+
+networks:
+    nginx-proxy-network:
+        external: true

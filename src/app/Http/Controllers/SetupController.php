@@ -217,7 +217,8 @@ class SetupController extends Controller {
     public static function finishSetup(Request $request) {
         // get data from cookie, decode JSON
         if (!isset($_COOKIE['setup_arguments'])) {
-            abort(404);
+            // abort(404);
+            return view('errors.404');
         }
 
         $setup_finish_args_raw = $_COOKIE['setup_arguments'];
@@ -229,7 +230,8 @@ class SetupController extends Controller {
         $transaction_authorised = env('TMP_SETUP_AUTH_KEY') == $setup_finish_args->setup_auth_key;
 
         if ($transaction_authorised != true) {
-            abort(403, 'Transaction unauthorised.');
+            // abort(403, 'Transaction unauthorised.');
+            return view('errors.403');
         }
 
         $database_created = self::createDatabase();
