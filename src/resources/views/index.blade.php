@@ -33,7 +33,7 @@
                 <div class="input-group-addon">
                     <strong>{{env('APP_ADDRESS')}}/@if (session('role_group') == 'Mahasiswa')m/@endif</strong>
                 </div>
-                <input type='text' placeholder="your custom URL" autocomplete="off" class='form-control custom-url-field' name='custom-ending' />
+                <input type='text' placeholder="your custom URL" autocomplete="off" class='form-control custom-url-field' name='custom-ending' required/>
             </div>
         </div>
         <a href='#' class='btn btn-success check-btn' id='check-link-availability'>Check Availability</a>
