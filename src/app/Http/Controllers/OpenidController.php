@@ -62,11 +62,11 @@ class OpenidController extends Controller
             $_SESSION['id_token']  = $oidc->getIdToken();
             $_SESSION['user_info'] = $oidc->requestUserInfo();
 
-            $userInfo = $_SESSION['user_info'];
-            $ssoId= $userInfo->sub;
-            if (UserHelper::getUserBySSOId($ssoId) == null) {
-                return "Status akun tidak aktif. Silahkan menghubungi Administrator";
-            }
+            // $userInfo = $_SESSION['user_info'];
+            // $ssoId= $userInfo->sub;
+            // if (UserHelper::getUserBySSOId($ssoId) == null) {
+            //     return "Status akun tidak aktif. Silahkan menghubungi Administrator";
+            // }
         } catch (OpenIDConnectClientException $e) {
             if (env('APP_DEBUG') == true) {
                 echo $e->getMessage();
