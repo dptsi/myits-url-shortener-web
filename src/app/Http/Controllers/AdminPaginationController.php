@@ -39,6 +39,7 @@ class AdminPaginationController extends Controller {
         if (session('username') === $user->username) {
             $btn_class = 'disabled';
         }
+        return '';
         return '<a ng-click="deleteUser($event, \''. $user->id .'\')" class="btn btn-sm btn-danger ' . $btn_class . ' delete-button-custom">
             Delete
         </a>';
@@ -83,7 +84,10 @@ class AdminPaginationController extends Controller {
         // Add "change role" select box
         // <select> field does not use Angular bindings
         // because of an issue affecting fields with duplicate names.
-
+        $role = '-';
+        if($user->role != null){
+            $role =$user->role;
+        }
         $select_role = '<select ng-init="changeUserRole.u' . $user->id . ' = \'' . e($user->role) . '\'"
             ng-model="changeUserRole.u' . $user->id . '" ng-change="changeUserRole(changeUserRole.u' . $user->id . ', '.$user->id.')"
             class="form-control"';
@@ -93,7 +97,7 @@ class AdminPaginationController extends Controller {
             $select_role .= ' disabled';
         }
         $select_role .= '>';
-
+        
         foreach (UserHelper::$USER_ROLES as $role_text => $role_val) {
             // Iterate over each available role and output option
             $select_role .= '<option value="' . e($role_val) . '"';
@@ -106,7 +110,8 @@ class AdminPaginationController extends Controller {
         }
 
         $select_role .= '</select>';
-        return $select_role;
+        return $role;
+        // return $select_role;
     }
 
     public function renderToggleLinkActiveCell($link) {

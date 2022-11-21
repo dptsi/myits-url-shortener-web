@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Helpers\AdminHelper;
@@ -14,8 +15,9 @@ class OpenidController extends Controller
     /**
      * Perform login using My ITS SSO
      */
-    public function performLogin(Request $request) {
-        
+    public function performLogin(Request $request)
+    {
+
         if ($this->isLoggedIn()) {
             return redirect()->route('index');
         }
@@ -28,8 +30,8 @@ class OpenidController extends Controller
                 env('OIDC_CLIENT_SECRET')
             );
 
-            $oidc->setRedirectURL( env('OIDC_REDIRECT_URL') );
-            $oidc->addScope( env('OIDC_SCOPE') );
+            $oidc->setRedirectURL(env('OIDC_REDIRECT_URL'));
+            $oidc->addScope(env('OIDC_SCOPE'));
 
             // remove this if in production mode
             $oidc->setVerifyHost(false);
@@ -37,9 +39,9 @@ class OpenidController extends Controller
 
             //call the main function of myITS SSO login
             $oidc->authenticate();
-            
-            $oidc->getSessionState();
 
+            $oidc->getSessionState();
+            
             if ($oidc->getVerifiedClaims('sid') != NULL) {
                 $sid = $oidc->getVerifiedClaims('sid');
 
@@ -47,35 +49,40 @@ class OpenidController extends Controller
                     session_destroy();
                     session_id($sid);
                     session_start();
-                }
-                else {
+                } else {
                     session_id($sid);
                     session_start();
                 }
-            }
-            else {
+            } else {
                 if (session_status() == PHP_SESSION_NONE) {
                     session_start();
                 }
             }
-            
+
             $_SESSION['id_token']  = $oidc->getIdToken();
             $_SESSION['user_info'] = $oidc->requestUserInfo();
-        }
-        catch (OpenIDConnectClientException $e) {
-            if (env('APP_DEBUG') == true)  {
+
+            $userInfo = $_SESSION['user_info'];
+            $ssoId= $userInfo->sub;
+            if (UserHelper::getUserBySSOId($ssoId) == null) {
+                return "Status akun tidak aktif. Silahkan menghubungi Administrator";
+            }
+        } catch (OpenIDConnectClientException $e) {
+            if (env('APP_DEBUG') == true) {
                 echo $e->getMessage();
             }
         }
-        
+
         $this->makeUserLoggedIn();
+        
         return redirect()->route('index');
     }
 
     /**
      * 
      */
-    public function makeUserLoggedIn() {
+    public function makeUserLoggedIn()
+    {
         $userInfo = $_SESSION['user_info']; // object
         $username = $userInfo->name;    // string
         $role     = '';                 // string
@@ -83,17 +90,15 @@ class OpenidController extends Controller
         $ssoId    = $userInfo->sub;     // string
         $ssoRole  = $userInfo->role;    // array of object
         $ssoGroup = $userInfo->group;   // array of object
-        
+
         // check for user email
-        if ( is_null($userInfo->email) ) {
-            if ( is_null($userInfo->alternate_email) ) {
+        if (is_null($userInfo->email)) {
+            if (is_null($userInfo->alternate_email)) {
                 $email = 'dummy@mail.com';
-            }
-            else {
+            } else {
                 $email = $userInfo->email;
             }
-        }
-        else {
+        } else {
             $email = $userInfo->email;
         }
 
@@ -112,8 +117,8 @@ class OpenidController extends Controller
         // if it is expires, then the user is not admin
         if ($role == UserHelper::$USER_ROLES['admin']) {
             // if there is an expiration date (not null), check whether it is expired
-            if ( is_null($expiredTime) == false) {
-                if ( AdminHelper::isDateExpired($expiredTime) )  {
+            if (is_null($expiredTime) == false) {
+                if (AdminHelper::isDateExpired($expiredTime)) {
                     $role = UserHelper::$USER_ROLES['default'];
                 }
             }
@@ -130,8 +135,7 @@ class OpenidController extends Controller
         if ($isStudent) {
             // obviously, if the user is a student, note the group as student
             $group = UserHelper::$ROLE_GROUP['mahasiswa'];
-        }
-        else {
+        } else {
             foreach ($obtainedGroup as $seeGroup) {
                 // assumption: each user is only given two group_name
                 // the first non-"everyone" group_name will be taken
@@ -144,16 +148,19 @@ class OpenidController extends Controller
 
         // if the user is logged in for the first time
         // then insert to the DB
-        if ( !UserHelper::isUserExist($ssoId, $username) ) {
+        if (!UserHelper::isUserExist($ssoId, $username)) {
             UserHelper::registerUser($ssoId, $username, $email, $role);
         }
         // else, the user have logged in. check the email and the role
         else {
+
             UserHelper::checkIdentity($ssoId, $username, $email, $role);
         }
-
+        
         $role = UserHelper::getUserRole($ssoId);
         $user_id = UserHelper::getUserID($ssoId);
+
+
 
         // set the required sessions to be used
         // later throughout this application
@@ -170,17 +177,17 @@ class OpenidController extends Controller
     /**
      * 
      */
-    public function performLogout(Request $request) {
+    public function performLogout(Request $request)
+    {
         try {
-            if(!isset($_SESSION)) 
-            { 
-                session_start(); 
+            if (!isset($_SESSION)) {
+                session_start();
             }
             $redirect = env('OIDC_POST_LOGOUT_URI');
 
-            if ( isset($_SESSION['id_token']) ) {
+            if (isset($_SESSION['id_token'])) {
                 $accessToken = $_SESSION['id_token'];
-                
+
                 // Forget the 'id_token' and 'user_info' session
                 // ensuring the user is really logged out
                 session_destroy();
@@ -195,9 +202,8 @@ class OpenidController extends Controller
                 $oidc->setVerifyPeer(false);
                 $oidc->signOut($accessToken, $redirect);
             }
-        }
-        catch (OpenIDConnectClientException $e) {
-            if (env('APP_DEBUG') == true)  {
+        } catch (OpenIDConnectClientException $e) {
+            if (env('APP_DEBUG') == true) {
                 echo $e->getMessage();
             }
         }

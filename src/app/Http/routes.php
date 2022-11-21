@@ -35,7 +35,6 @@ $app->get('/m/{short_url}', ['uses' => 'LinkController@performRedirect']);
 $app->get('/{short_url}/{secret_key}', ['uses' => 'LinkController@performRedirect']);
 
 $app->get('/admin/stats/{short_url}', ['uses' => 'StatsController@displayStats']);
-
 /* POST endpoints */
 
 // $app->post('/login', ['as' => 'plogin', 'uses' => 'UserController@performLogin']);
@@ -77,3 +76,4 @@ $app->group(['prefix' => '/api/v2', 'namespace' => 'App\Http\Controllers\Api', '
     $app->get('data/link', ['as' => 'api_link_analytics', 'uses' => 'ApiAnalyticsController@lookupLinkStats']);
     $app->post('data/link', ['as' => 'api_link_analytics', 'uses' => 'ApiAnalyticsController@lookupLinkStats']);
 });
+

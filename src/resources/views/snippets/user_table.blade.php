@@ -7,7 +7,7 @@
             <th>Activated</th>
             <th>API</th>
             <th>Role</th>
-            <th>Delete</th>
+            {{-- <th>Delete</th> --}}
         </tr>
     </thead>
 </table>
