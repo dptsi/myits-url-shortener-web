@@ -8,8 +8,10 @@ use App\Models\User;
 use App\Helpers\ApiHelper;
 use App\Exceptions\Api\ApiException;
 
-class ApiMiddleware {
-    protected static function getApiUserInfo(Request $request) {
+class ApiMiddleware
+{
+    protected static function getApiUserInfo(Request $request)
+    {
         $api_key = $request->input('key');
         $response_type = $request->input('response_type');
 
@@ -18,16 +20,14 @@ class ApiMiddleware {
 
             if (env('SETTING_ANON_API')) {
                 $username = 'ANONIP-' . $request->ip();
-            }
-            else {
+            } else {
                 throw new ApiException('AUTH_ERROR', 'Authentication token required.', 401, $response_type);
             }
             $user = (object) [
                 'username' => $username,
                 'anonymous' => true
             ];
-        }
-        else {
+        } else {
             $user = User::where('active', 1)
                 ->where('api_key', $api_key)
                 ->where('api_active', 1)
@@ -56,9 +56,11 @@ class ApiMiddleware {
      * @return mixed
      */
 
-    public function handle($request, Closure $next) {
-        $request->user = $this->getApiUserInfo($request);
-
+    public function handle($request, Closure $next)
+    {
+        if (!$request->session()->has('username')){
+            $request->user = $this->getApiUserInfo($request);
+        }
         return $next($request);
     }
 }

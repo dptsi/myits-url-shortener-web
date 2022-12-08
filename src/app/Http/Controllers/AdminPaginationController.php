@@ -169,6 +169,7 @@ class AdminPaginationController extends Controller {
             ->editColumn('clicks', [$this, 'renderClicksCell'])
             ->editColumn('long_url', [$this, 'renderLongUrlCell'])
             ->editColumn('created_at', [$this, 'formatDateTime'])
+            ->addColumn('qr_code', [$this, 'renderQrCode'])
             ->escapeColumns(['short_url', 'username'])
             ->make(true);
     }
@@ -185,7 +186,13 @@ class AdminPaginationController extends Controller {
             ->editColumn('clicks', [$this, 'renderClicksCell'])
             ->editColumn('long_url', [$this, 'renderLongUrlCell'])
             ->editColumn('created_at', [$this, 'formatDateTime'])
+            ->addColumn('qr_code', [$this, 'renderQrCode'])
             ->escapeColumns(['short_url'])
             ->make(true);
+    }
+
+    //nusantara
+    public function renderQrCode($link) {
+        return '<img src="https://api.qrserver.com/v1/create-qr-code/?data='. $link->short_url .'&amp;size=100x100" alt="" title="" />';
     }
 }
