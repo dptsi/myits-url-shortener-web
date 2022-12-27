@@ -193,6 +193,6 @@ class AdminPaginationController extends Controller {
 
     //nusantara
     public function renderQrCode($link) {
-        return '<img src="https://api.qrserver.com/v1/create-qr-code/?data='. $link->short_url .'&amp;size=100x100" alt="" title="" />';
+        return '<img src="https://api.qrserver.com/v1/create-qr-code/?data=https://its.id/'. $link->short_url .'&amp;size=100x100" alt="" title="" />';
     }
 }
