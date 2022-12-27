@@ -54,6 +54,7 @@ class AdminPaginationController extends Controller {
     }
 
     public function renderAdminApiActionCell($user) {
+        return '';
         // Add "API Info" action button
         return '<a class="activate-api-modal btn btn-sm btn-info"
             ng-click="openAPIModal($event, \'' . e($user->username) . '\', \'' . $user->api_key . '\', \'' . $user->api_active . '\', \'' . e($user->api_quota) . '\', \'' . $user->id . '\')">
@@ -140,7 +141,7 @@ class AdminPaginationController extends Controller {
 
         $admin_users = User::select(['username', 'email', 'created_at', 'active', 'api_key', 'api_active', 'api_quota', 'role', 'id']);
         return Datatables::of($admin_users)
-            ->addColumn('api_action', [$this, 'renderAdminApiActionCell'])
+            // ->addColumn('api_action', [$this, 'renderAdminApiActionCell'])
             ->addColumn('toggle_active', [$this, 'renderToggleUserActiveCell'])
             ->addColumn('change_role', [$this, 'renderChangeUserRoleCell'])
             ->addColumn('delete', [$this, 'renderDeleteUserCell'])
