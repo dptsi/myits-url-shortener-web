@@ -27,7 +27,7 @@ $app->get('/login', ['as' => 'login', 'uses' => 'OpenidController@performLogin']
 $app->get('/admin', ['as' => 'admin', 'uses' => 'AdminController@displayAdminPage']);
 
 // $app->get('/setup', ['as' => 'setup', 'uses' => 'SetupController@displaySetupPage']);
-$app->post('/setup', ['as' => 'psetup', 'uses' => 'SetupController@performSetup']);
+// $app->post('/setup', ['as' => 'psetup', 'uses' => 'SetupController@performSetup']);
 $app->get('/setup/finish', ['as' => 'setup_finish', 'uses' => 'SetupController@finishSetup']);
 
 $app->get('/{short_url}', ['uses' => 'LinkController@performRedirect']);
