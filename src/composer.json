@@ -18,7 +18,9 @@
         "google/recaptcha": "~1.1",
         "myits/openid-connect-client": "*",
         "illuminate/redis": "*",
-        "simplesoftwareio/simple-qrcode": "~4"
+        "illuminate/queue": "^5.1",
+        "simplesoftwareio/simple-qrcode": "~4",
+        "google/cloud-storage": "^1.30"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.0",

@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use Yajra\Datatables\Facades\Datatables;
 
@@ -7,8 +9,11 @@ use App\Models\Link;
 use App\Models\User;
 use App\Helpers\UserHelper;
 use Illuminate\Support\Facades\DB;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Response;
 
-class AdminPaginationController extends Controller {
+class AdminPaginationController extends Controller
+{
     /**
      * Process AJAX Datatables pagination queries from the admin panel.
      *
@@ -17,35 +22,38 @@ class AdminPaginationController extends Controller {
 
     /* Cell rendering functions */
 
-    public function renderLongUrlCell($link) {
-        return '<a target="_blank" title="' . e($link->long_url) . '" href="'. $link->long_url .'">' . str_limit($link->long_url, 50) . '</a>
+    public function renderLongUrlCell($link)
+    {
+        return '<a target="_blank" title="' . e($link->long_url) . '" href="' . $link->long_url . '">' . str_limit($link->long_url, 50) . '</a>
             <a class="btn btn-primary btn-xs edit-long-link-btn" ng-click="editLongLink(\'' . $link->short_url . '\', \'' . $link->long_url . '\')"><i class="fa fa-edit edit-link-icon"></i></a>';
     }
 
-    public function renderClicksCell($link) {
+    public function renderClicksCell($link)
+    {
         if (env('SETTING_ADV_ANALYTICS')) {
             return $link->clicks . ' <a target="_blank" class="stats-icon" href="/admin/stats/' . e($link->short_url) . '">
                 <i class="fa fa-area-chart" aria-hidden="true"></i>
             </a>';
-        }
-        else {
+        } else {
             return $link->clicks;
         }
     }
 
-    public function renderDeleteUserCell($user) {
+    public function renderDeleteUserCell($user)
+    {
         // Add "Delete" action button
         $btn_class = '';
         if (session('username') === $user->username) {
             $btn_class = 'disabled';
         }
         return '';
-        return '<a ng-click="deleteUser($event, \''. $user->id .'\')" class="btn btn-sm btn-danger ' . $btn_class . ' delete-button-custom">
+        return '<a ng-click="deleteUser($event, \'' . $user->id . '\')" class="btn btn-sm btn-danger ' . $btn_class . ' delete-button-custom">
             Delete
         </a>';
     }
 
-    public function renderDeleteLinkCell($link) {
+    public function renderDeleteLinkCell($link)
+    {
         // Add "Delete" action button
         return '<a ng-click="deleteLink($event, \'' . e($link->short_url)  . '\')"
             class="btn btn-sm btn-default delete-link delete-button-custom">
@@ -53,7 +61,8 @@ class AdminPaginationController extends Controller {
         </a>';
     }
 
-    public function renderAdminApiActionCell($user) {
+    public function renderAdminApiActionCell($user)
+    {
         return '';
         // Add "API Info" action button
         return '<a class="activate-api-modal btn btn-sm btn-info"
@@ -62,7 +71,8 @@ class AdminPaginationController extends Controller {
         </a>';
     }
 
-    public function renderToggleUserActiveCell($user) {
+    public function renderToggleUserActiveCell($user)
+    {
         // Add user account active state toggle buttons
         $btn_class = '';
         if (session('username') === $user->username) {
@@ -72,8 +82,7 @@ class AdminPaginationController extends Controller {
         if ($user->active) {
             $active_text = 'Active';
             $btn_color_class = ' btn-success';
-        }
-        else {
+        } else {
             $active_text = 'Inactive';
             $btn_color_class = ' btn-danger';
         }
@@ -81,16 +90,17 @@ class AdminPaginationController extends Controller {
         return '<a class="btn btn-sm status-display' . $btn_color_class . $btn_class . '" ng-click="toggleUserActiveStatus($event, ' . $user->id . ')">' . $active_text . '</a>';
     }
 
-    public function renderChangeUserRoleCell($user) {
+    public function renderChangeUserRoleCell($user)
+    {
         // Add "change role" select box
         // <select> field does not use Angular bindings
         // because of an issue affecting fields with duplicate names.
         $role = '-';
-        if($user->role != null){
-            $role =$user->role;
+        if ($user->role != null) {
+            $role = $user->role;
         }
         $select_role = '<select ng-init="changeUserRole.u' . $user->id . ' = \'' . e($user->role) . '\'"
-            ng-model="changeUserRole.u' . $user->id . '" ng-change="changeUserRole(changeUserRole.u' . $user->id . ', '.$user->id.')"
+            ng-model="changeUserRole.u' . $user->id . '" ng-change="changeUserRole(changeUserRole.u' . $user->id . ', ' . $user->id . ')"
             class="form-control"';
 
         if (session('username') === $user->username) {
@@ -98,7 +108,7 @@ class AdminPaginationController extends Controller {
             $select_role .= ' disabled';
         }
         $select_role .= '>';
-        
+
         foreach (UserHelper::$USER_ROLES as $role_text => $role_val) {
             // Iterate over each available role and output option
             $select_role .= '<option value="' . e($role_val) . '"';
@@ -115,7 +125,8 @@ class AdminPaginationController extends Controller {
         // return $select_role;
     }
 
-    public function renderToggleLinkActiveCell($link) {
+    public function renderToggleLinkActiveCell($link)
+    {
         // Add "Disable/Enable" action buttons
         $btn_class = 'btn-danger';
         $btn_text = 'Disable';
@@ -130,13 +141,15 @@ class AdminPaginationController extends Controller {
         </a>';
     }
 
-    public function formatDateTime($link) {
+    public function formatDateTime($link)
+    {
         return date('d M Y, H:i', strtotime($link->created_at));
     }
 
     /* DataTables bindings */
 
-    public function paginateAdminUsers(Request $request) {
+    public function paginateAdminUsers(Request $request)
+    {
         self::ensureAdmin();
 
         $admin_users = User::select(['username', 'email', 'created_at', 'active', 'api_key', 'api_active', 'api_quota', 'role', 'id']);
@@ -150,7 +163,8 @@ class AdminPaginationController extends Controller {
             ->make(true);
     }
 
-    public function paginateAdminLinks(Request $request) {
+    public function paginateAdminLinks(Request $request)
+    {
         self::ensureAdmin();
 
         // $admin_links = Link::select(['short_url', 'long_url', 'clicks', 'created_at', 'creator', 'is_disabled']);
@@ -161,6 +175,7 @@ class AdminPaginationController extends Controller {
                 'links.long_url',
                 'links.clicks',
                 'links.created_at',
+                'links.base64',
                 'users.username',
                 'links.is_disabled'
             ]);
@@ -175,13 +190,14 @@ class AdminPaginationController extends Controller {
             ->make(true);
     }
 
-    public function paginateUserLinks(Request $request) {
+    public function paginateUserLinks(Request $request)
+    {
         self::ensureLoggedIn();
 
         $username = session('username');
         $user_id  = session('user_id');
         $user_links = Link::where('user_id', $user_id)
-            ->select(['id', 'short_url', 'long_url', 'clicks', 'created_at']);
+            ->select(['id', 'short_url', 'long_url', 'base64', 'clicks', 'created_at']);
 
         return Datatables::of($user_links)
             ->editColumn('clicks', [$this, 'renderClicksCell'])
@@ -193,7 +209,11 @@ class AdminPaginationController extends Controller {
     }
 
     //nusantara
-    public function renderQrCode($link) {
-        return '<img src="https://api.qrserver.com/v1/create-qr-code/?data=https://its.id/'. $link->short_url .'&amp;size=100x100" alt="" title="" />';
+    public function renderQrCode($link)
+    {
+        if ($link->base64 != null) {
+            return ' <img src="data:image/png;base64,' . $link->base64 . '" alt="QR Code">';
+        }
+        return '<img src="https://api.qrserver.com/v1/create-qr-code/?data=https://its.id/' . $link->short_url . '&amp;size=100x100" alt="" title="" />';
     }
 }

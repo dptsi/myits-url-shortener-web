@@ -10,6 +10,7 @@ class IndexController extends Controller {
      * @return Response
      */
     public function showIndexPage(Request $request) {
+
         //Adetiya Bagus Nusantara
         //session_start();
 
