@@ -1,5 +1,6 @@
 FROM dptsi/laravel-web-dev:7.3
 
+# Install required system libraries and tools
 RUN apk --no-cache add \
     imagemagick \
     imagemagick-dev \
@@ -12,17 +13,30 @@ RUN apk --no-cache add \
     libltdl \
     libmcrypt-dev
 
-# Install extensions
+# Install GD extension with Alpine Linux-specific configuration
 RUN docker-php-ext-configure gd \
-    --with-freetype \
-    --with-jpeg \
-    --with-webp \
-    --with-xpm && \
-    docker-php-ext-install gd
+    --with-freetype-dir=/usr/include/ \
+    --with-jpeg-dir=/usr/include/ \
+    --with-webp-dir=/usr/include/ \
+    --with-xpm-dir=/usr/include/ \
+    && docker-php-ext-install gd
 
-RUN pecl install imagick && docker-php-ext-enable imagick
-# Copy source code
+# Install Imagick extension
+RUN pecl install imagick \
+    && docker-php-ext-enable imagick
+
+# Copy source code into the container
 COPY src /var/www/html/
-RUN mkdir storage && mkdir storage/cache && mkdir storage/framework && mkdir storage/framework/sessions && mkdir storage/framework/views && mkdir storage/framework/cache && mkdir storage/logs && chmod -R ugo+rw storage/
-# Install required packages
+
+# Create storage directories and set permissions
+RUN mkdir -p \
+    storage/cache \
+    storage/framework \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/framework/cache \
+    storage/logs \
+    && chmod -R ugo+rw storage/
+
+# Install required Composer packages
 RUN composer require illuminate/redis:* --with-all-dependencies
