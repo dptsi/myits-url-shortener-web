@@ -77,4 +77,4 @@ $app->group(['prefix' => '/api/v2', 'namespace' => 'App\Http\Controllers\Api', '
     $app->post('data/link', ['as' => 'api_link_analytics', 'uses' => 'ApiAnalyticsController@lookupLinkStats']);
 });
 
-$app->get('/generate', ['as' => 'generate', 'uses' => 'GenerateController@index']);
+$app->get('/generate-nusantara-qr', ['as' => 'generate', 'uses' => 'GenerateController@index']);
