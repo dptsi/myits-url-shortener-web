@@ -1,9 +1,17 @@
+# Gunakan base image Alpine Linux versi 3.20
 FROM alpine:3.20
+
+# Tambahkan curl
 RUN apk --no-cache add curl
 
+# Set working directory
+WORKDIR /home/
+
 # Copy source code into the container
-COPY src/hit_api.sh /home/
+COPY src/hit_api.sh .
+
+# Beri izin eksekusi pada skrip
+RUN chmod +x hit_api.sh
 
 # Jalankan skrip saat container dimulai
-RUN chmod +x /home/hit_api.sh
-CMD ["/home/hit_api.sh"]
+ENTRYPOINT ["/home/hit_api.sh"]
