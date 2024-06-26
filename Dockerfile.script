@@ -1,8 +1,8 @@
 # Gunakan base image Alpine Linux versi 3.20
 FROM alpine:3.20
 
-# Tambahkan curl
-RUN apk --no-cache add curl
+# Install supervisor dan curl
+RUN apk --no-cache add supervisor curl
 
 # Set working directory
 WORKDIR /home/
@@ -13,8 +13,6 @@ COPY src/hit_api.sh .
 # Beri izin eksekusi pada skrip
 RUN chmod +x /home/hit_api.sh
 
-# Debugging: List isi direktori untuk memastikan file ada
-RUN ls -l /home/
-
-# Jalankan skrip saat container dimulai
-ENTRYPOINT ["sh /home/hit_api.sh"]
+# Trigger supervisor
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

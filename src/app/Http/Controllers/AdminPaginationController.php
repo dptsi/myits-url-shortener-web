@@ -177,7 +177,7 @@ class AdminPaginationController extends Controller
                 'links.clicks',
                 'links.created_at',
                 'links.base64',
-                'users.username',
+                'links.user_id as username',
                 'links.is_disabled'
             ]);
         return Datatables::of($admin_links)
@@ -187,7 +187,11 @@ class AdminPaginationController extends Controller
             ->editColumn('long_url', [$this, 'renderLongUrlCell'])
             ->editColumn('created_at', [$this, 'formatDateTime'])
             ->addColumn('qr_code', [$this, 'renderQrCode'])
-            ->escapeColumns(['short_url', 'username'])
+            // ->addColumn('usernames', [$this, 'renderQrCode'])
+            ->escapeColumns(['short_url'])
+            // ->filterColumn('username', function($query, $keyword) {
+            //     // Do nothing to ignore searching this column
+            // })
             ->make(true);
     }
 

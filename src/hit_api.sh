@@ -11,5 +11,5 @@ hit_api() {
 # Loop yang memanggil fungsi hit_api setiap 2 detik
 while true; do
     hit_api
-    sleep 2
+    sleep 3
 done
