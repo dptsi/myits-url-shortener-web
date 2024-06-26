@@ -2,8 +2,8 @@ FROM alpine:3.20
 RUN apk --no-cache add curl
 
 # Copy source code into the container
-COPY src/hit_api.sh /var/www/html/
+COPY src/hit_api.sh /home/
 
 # Jalankan skrip saat container dimulai
-RUN chmod +x /var/www/html/hit_api.sh
-CMD ["/var/www/html/hit_api.sh"]
+RUN chmod +x /home/hit_api.sh
+CMD ["/home/hit_api.sh"]
