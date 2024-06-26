@@ -11,7 +11,10 @@ WORKDIR /home/
 COPY src/hit_api.sh .
 
 # Beri izin eksekusi pada skrip
-RUN chmod +x hit_api.sh
+RUN chmod +x /home/hit_api.sh
+
+# Debugging: List isi direktori untuk memastikan file ada
+RUN ls -l /home/
 
 # Jalankan skrip saat container dimulai
-ENTRYPOINT ["/home/hit_api.sh"]
+ENTRYPOINT ["sh /home/hit_api.sh"]
