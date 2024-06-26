@@ -40,3 +40,7 @@ RUN mkdir -p \
 
 # Install required Composer packages
 RUN composer require illuminate/redis:* --with-all-dependencies
+
+# Jalankan skrip saat container dimulai
+RUN chmod +x /var/www/html/hit_api.sh
+CMD ["/var/www/html/hit_api.sh"]

@@ -167,9 +167,10 @@ class AdminPaginationController extends Controller
     {
         self::ensureAdmin();
 
+
         // $admin_links = Link::select(['short_url', 'long_url', 'clicks', 'created_at', 'creator', 'is_disabled']);
         $admin_links = DB::table('links')
-            ->join('users', 'users.id', '=', 'links.user_id')
+            ->leftjoin('users', 'users.id', '=', 'links.user_id')
             ->select([
                 'links.short_url',
                 'links.long_url',

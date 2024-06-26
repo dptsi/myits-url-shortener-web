@@ -18,6 +18,7 @@ $app->get('/', ['as' => 'index', 'uses' => 'IndexController@showIndexPage']);
 $app->get('/logout', ['as' => 'logout', 'uses' => 'UserController@performLogoutUser']);
 $app->get('/logout_oidc', ['as' => 'logout_oidc', 'uses' => 'OpenidController@performLogout']);
 $app->get('/login', ['as' => 'login', 'uses' => 'OpenidController@performLogin']);
+$app->get('/generate-qrbase64', ['as' => 'generate-qrbase64', 'uses' => 'GenerateController@index']);
 // $app->get('/about-polr', ['as' => 'about', 'uses' => 'StaticPageController@displayAbout']);
 
 // $app->get('/lost_password', ['as' => 'lost_password', 'uses' => 'UserController@displayLostPasswordPage']);
@@ -77,4 +78,4 @@ $app->group(['prefix' => '/api/v2', 'namespace' => 'App\Http\Controllers\Api', '
     $app->post('data/link', ['as' => 'api_link_analytics', 'uses' => 'ApiAnalyticsController@lookupLinkStats']);
 });
 
-// $app->get('/generate-nusantara-qr', ['as' => 'generate', 'uses' => 'GenerateController@index']);
+
