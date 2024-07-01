@@ -15,13 +15,18 @@
 <a id="generate-qr-code" class='btn btn-primary'>Generate QR Code</a>
 <a href='{{route('index')}}' class='btn btn-info'>Shorten another</a>
 
-<div class="qr-code-container"></div>
+<div class="qr-code-container">
+</div>
 
 @endsection
 
 
 @section('js')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-loading-overlay/2.1.7/loadingoverlay.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-loading-overlay/2.1.7/loadingoverlay.min.js"></script>
 <script src='/js/qrcode.min.js'></script>
 <script src='/js/clipboard.min.js'></script>
 <script src='/js/shorten_result.js'></script>
+
 @endsection

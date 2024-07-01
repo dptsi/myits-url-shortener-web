@@ -157,7 +157,7 @@ polr.controller('AdminCtrl', function($scope, $compile, $timeout) {
                     {data: 'clicks', name: 'clicks'},
                     {data: 'created_at', name: 'created_at', searchable: false},
                     {data: 'qr_code', name: 'qr_code', searchable: false},
-                    {data: 'username', name: 'username', searchable: false},
+                    {data: 'username',orderable: false, name: 'username', searchable: false},
 
                     {data: 'disable', name: 'disable', orderable: false, searchable: false},
                     {data: 'delete', name: 'delete', orderable: false, searchable: false}

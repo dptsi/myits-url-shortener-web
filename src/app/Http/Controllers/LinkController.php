@@ -9,6 +9,7 @@ use App\Helpers\CryptoHelper;
 use App\Helpers\LinkHelper;
 use App\Helpers\ClickHelper;
 use App\Helpers\UserHelper;
+use App\Jobs\GenerateQRCode;
 
 class LinkController extends Controller {
     /**
@@ -31,6 +32,7 @@ class LinkController extends Controller {
             'link-url' => 'required|url',
             'custom-ending' => 'required|alpha_dash'
         ]);
+        
 
         $long_url = $request->input('link-url');
         $custom_ending = $request->input('custom-ending');
@@ -39,8 +41,10 @@ class LinkController extends Controller {
         $creator_id = UserHelper::getUserID( session('sso_id') );
         $link_ip = $request->ip();
 
+        
         try {
             $short_url = LinkFactory::createLink($long_url, $is_secret, $custom_ending, $link_ip, $creator_id);
+            (new GenerateQRCode($custom_ending))->handle();
         }
         catch (\Exception $e) {
             return self::renderError($e->getMessage());

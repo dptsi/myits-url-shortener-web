@@ -19,7 +19,7 @@ class GenerateQRCode
     public function handle()
     {
         // URL yang akan diencode dalam QR code
-        $url = 'https://its.id/' . $this->item->short_url;
+        $url = 'https://its.id/' . $this->item;
 
         // Membuat QR code
         $qrCode = QrCode::format('png')
@@ -33,6 +33,6 @@ class GenerateQRCode
         $qrCodeBase64 = base64_encode($qrCode);
 
         // Memperbarui database dengan nilai base64 dari QR code
-        DB::table('links')->where('short_url', $this->item->short_url)->update(['base64' => $qrCodeBase64]);
+        DB::table('links')->where('short_url', $this->item)->update(['base64' => $qrCodeBase64]);
     }
 }

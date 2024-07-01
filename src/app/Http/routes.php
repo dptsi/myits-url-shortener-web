@@ -19,6 +19,7 @@ $app->get('/logout', ['as' => 'logout', 'uses' => 'UserController@performLogoutU
 $app->get('/logout_oidc', ['as' => 'logout_oidc', 'uses' => 'OpenidController@performLogout']);
 $app->get('/login', ['as' => 'login', 'uses' => 'OpenidController@performLogin']);
 $app->get('/generate-qrbase64', ['as' => 'generate-qrbase64', 'uses' => 'GenerateController@index']);
+$app->get('/generate-qrbase64/{short_url}', ['as' => 'generate-qrbase64-show', 'uses' => 'GenerateController@show']);
 // $app->get('/about-polr', ['as' => 'about', 'uses' => 'StaticPageController@displayAbout']);
 
 // $app->get('/lost_password', ['as' => 'lost_password', 'uses' => 'UserController@displayLostPasswordPage']);

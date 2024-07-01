@@ -1,3 +1,4 @@
+
 var original_link;
 
 function select_text() {
@@ -12,26 +13,54 @@ $('.result-box').change(function () {
 
 $('#generate-qr-code').click(function () {
     var container = $('.qr-code-container');
-    container.empty();
-    new QRCode(container.get(0), {
-        text: original_link,
-        width: 280,
-        height: 280
+    var loading = container.find('.loading');
+    var base_url = "https://its.id/";
+    
+    // Menghapus base_url dari original_link
+    var short_link = original_link.replace(base_url, '');
+    container.empty(); // Kosongkan container tapi tetap simpan elemen loading
+    $.LoadingOverlay("show");
+    var url = "https://shortener.its.ac.id/generate-qrbase64/" + encodeURIComponent(short_link);
+    $.ajax({
+        url: url, // Ganti dengan URL endpoint server Anda
+        method: 'GET',
+        success: function (response) {
+            // Asumsikan server mengembalikan string base64
+            var base64Image = response;
+            console.log('QR Code:', base64Image);
+
+            // Buat elemen <img> dan atur atribut 'src' dengan data base64
+            var imgElement = document.createElement('img');
+            imgElement.src = 'data:image/png;base64,' + base64Image;
+            imgElement.alt = "QR Code";
+
+            // Tambahkan elemen <img> ke dalam container
+            // $('#qr-code-container').append(imgElement);
+            container.append(imgElement);
+            container.find('img').attr('alt', original_link);
+            container.show();
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.error('Error:', textStatus, errorThrown);
+        }
+        ,
+        complete: function() {
+            // Sembunyikan loading setelah permintaan selesai (berhasil atau gagal)
+            $.LoadingOverlay("hide");
+        }
     });
-    container.find('img').attr('alt', original_link);
-    container.show();
+
 });
 
-
 var clipboard = new Clipboard('#clipboard-copy');
-clipboard.on('success', function(e) {
+clipboard.on('success', function (e) {
     e.clearSelection();
     $('#clipboard-copy').tooltip('show');
 });
 
-$('#clipboard-copy').on('blur',function () {
+$('#clipboard-copy').on('blur', function () {
     $(this).tooltip('destroy');
-}).on('mouseleave',function () {
+}).on('mouseleave', function () {
     $(this).tooltip('destroy');
 });
 

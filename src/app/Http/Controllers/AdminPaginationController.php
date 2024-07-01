@@ -177,7 +177,7 @@ class AdminPaginationController extends Controller
                 'links.clicks',
                 'links.created_at',
                 'links.base64',
-                'links.user_id as username',
+                'users.username',
                 'links.is_disabled'
             ]);
         return Datatables::of($admin_links)
@@ -217,7 +217,7 @@ class AdminPaginationController extends Controller
     public function renderQrCode($link)
     {
         if ($link->base64 != null) {
-            return ' <img src="data:image/png;base64,' . $link->base64 . '" alt="QR Code">';
+                return ' <img src="data:image/png;base64,' . $link->base64 . '" alt="QR Code">';
         }
         return '<img src="https://api.qrserver.com/v1/create-qr-code/?data=https://its.id/' . $link->short_url . '&amp;size=100x100" alt="" title="" />';
     }
