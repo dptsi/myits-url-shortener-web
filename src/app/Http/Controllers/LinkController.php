@@ -44,14 +44,12 @@ class LinkController extends Controller {
         
         try {
             $short_url = LinkFactory::createLink($long_url, $is_secret, $custom_ending, $link_ip, $creator_id);
-            // (new GenerateQRCode($custom_ending))->handle();
+            (new GenerateQRCode($custom_ending))->handle();
         }
         catch (\Exception $e) {
             return self::renderError($e->getMessage());
         }
-  
-        // return response()->json(['short_url' => $short_url]);
-        // $this->showShortenResult($short_url);
+
         return view('shorten_result', ['short_url' => $short_url]);
     }
 
