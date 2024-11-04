@@ -67,6 +67,7 @@ $app->middleware([
 
 $app->routeMiddleware([
     'api' => App\Http\Middleware\ApiMiddleware::class,
+    'admin' => App\Http\Middleware\AdminMiddleware::class,
 ]);
 
 /*

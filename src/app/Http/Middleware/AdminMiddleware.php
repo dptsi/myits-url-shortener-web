@@ -60,7 +60,7 @@ class AdminMiddleware
     {
         if ($request->session()->has('username')) {
             $user = User::where('username', $request->session()->get('username'))->first();
-            if (!$user || !$user->is_admin) {
+            if (!$user || !$user->role=='admin') {
                 throw new ApiException('AUTH_ERROR', 'Access denied. Admins only.', 403, $request->input('response_type'));
             }
         }
