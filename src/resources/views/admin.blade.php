@@ -16,9 +16,10 @@
                 <li role='presentation' aria-controls="links" class='admin-nav-item'>
                     <a href='#links'><span class="glyphicon glyphicon-link" aria-hidden="true"></span>Links</a>
                 </li>
-                {{-- <li role='presentation' aria-controls="settings" class='admin-nav-item'>
-                    <a href='#settings'>Settings</a>
-                </li> --}}
+<!-- 
+                <li role='presentation' aria-controls="links" class='admin-nav-item'>
+                    <a href='{{ url('links') }}'><span class="glyphicon glyphicon-link" aria-hidden="true"></span>Links</a>
+                </li> -->
 
                 @if ($role == $admin_role)
                 <li role='presentation' class='admin-nav-item'>
@@ -49,15 +50,6 @@
                     ])
                 </div>
 
-                {{-- <div role="tabpanel" class="tab-pane" id="settings">
-                    <h3>Change Password</h3>
-                    <form action='/admin/action/change_password' method='POST'>
-                        Old Password: <input class="form-control password-box" type='password' name='current_password' />
-                        New Password: <input class="form-control password-box" type='password' name='new_password' />
-                        <input type="hidden" name='_token' value='{{csrf_token()}}' />
-                        <input type='submit' class='btn btn-success change-password-btn'/>
-                    </form>
-                </div> --}}
 
                 @if ($role == $admin_role)
                 <div role="tabpanel" class="tab-pane" id="admin">
@@ -65,36 +57,6 @@
                     @include('snippets.link_table', [
                         'table_id' => 'admin_links_table'
                     ])
-
-                    <!-- <h3 class="users-heading">Users</h3>
-                    <a ng-click="state.showNewUserWell = !state.showNewUserWell" class="btn btn-primary btn-sm status-display">New</a>
-
-                    <div ng-if="state.showNewUserWell" class="new-user-fields well">
-                        <table class="table">
-                            <tr>
-                                <th>Username</th>
-                                <th>Password</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th></th>
-                            </tr>
-                            <tr id="new-user-form">
-                                <td><input type="text" class="form-control" ng-model="newUserParams.username"></td>
-                                <td><input type="password" class="form-control" ng-model="newUserParams.userPassword"></td>
-                                <td><input type="email" class="form-control" ng-model="newUserParams.userEmail"></td>
-                                <td>
-                                    <select class="form-control new-user-role" ng-model="newUserParams.userRole">
-                                        @foreach  ($user_roles as $role_text => $role_val)
-                                            <option value="{{$role_val}}">{{$role_text}}</option>
-                                        @endforeach
-                                    </select>
-                                </td>
-                                <td>
-                                    <a ng-click="addNewUser($event)" class="btn btn-primary btn-sm status-display new-user-add">Add</a>
-                                </td>
-                            </tr>
-                        </table>
-                    </div> -->
 
                     <h3>Users</h3>
                     @include('snippets.user_table', [

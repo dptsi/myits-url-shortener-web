@@ -10,6 +10,7 @@ use App\Helpers\LinkHelper;
 use App\Helpers\ClickHelper;
 use App\Helpers\UserHelper;
 use App\Jobs\GenerateQRCode;
+use Yajra\Datatables\Facades\Datatables;
 
 class LinkController extends Controller {
     /**
@@ -20,6 +21,27 @@ class LinkController extends Controller {
 
     private function renderError($message) {
         return redirect(route('index'))->with('error', $message);
+    }
+
+    public function index(){
+        $role = session('role');
+        return view('links.index',compact('role'));
+    }
+    public function getDatatable()
+    {
+        $role = session('role');
+        $query = Link::query();
+        
+
+        if ($role == 'admin') {
+            $links = $query->get();
+        } else {
+            $user_id = UserHelper::getUserID(session('sso_id'));
+            $links = $query->where('user_id', $user_id);
+        }
+        // dd($links);
+
+        return Datatables::of($links)->make(true);
     }
 
     public function performShorten(Request $request) {

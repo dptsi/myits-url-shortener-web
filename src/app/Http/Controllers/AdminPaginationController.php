@@ -184,7 +184,7 @@ class AdminPaginationController extends Controller
             ->addColumn('disable', [$this, 'renderToggleLinkActiveCell'])
             ->addColumn('delete', [$this, 'renderDeleteLinkCell'])
             ->editColumn('clicks', [$this, 'renderClicksCell'])
-            ->editColumn('long_url', [$this, 'renderLongUrlCell'])
+            // ->editColumn('long_url', [$this, 'renderLongUrlCell'])
             ->editColumn('created_at', [$this, 'formatDateTime'])
             ->addColumn('qr_code', [$this, 'renderQrCode'])
             // ->addColumn('usernames', [$this, 'renderQrCode'])
@@ -205,8 +205,8 @@ class AdminPaginationController extends Controller
             ->select(['id', 'short_url', 'long_url', 'base64', 'clicks', 'created_at']);
 
         return Datatables::of($user_links)
-            ->editColumn('clicks', [$this, 'renderClicksCell'])
-            ->editColumn('long_url', [$this, 'renderLongUrlCell'])
+            // ->editColumn('clicks', [$this, 'renderClicksCell'])
+            // ->editColumn('long_url', [$this, 'renderLongUrlCell'])
             ->editColumn('created_at', [$this, 'formatDateTime'])
             ->addColumn('qr_code', [$this, 'renderQrCode'])
             ->escapeColumns(['short_url'])

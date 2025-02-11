@@ -18,12 +18,11 @@ class AdminController extends Controller {
         if (!$this->isLoggedIn()) {
             return redirect(route('login'))->with('error', 'Please login to access your dashboard.');
         }
-
+        // dd("ok");
         $username = session('username');
         $role = session('role');
-
+        
         $user = UserHelper::getUserByUsername($username);
-
         if (!$user) {
             return redirect(route('index'))->with('error', 'Invalid or disabled account.');
         }

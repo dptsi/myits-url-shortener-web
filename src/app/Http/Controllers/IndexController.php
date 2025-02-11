@@ -13,6 +13,7 @@ class IndexController extends Controller {
 
         //Adetiya Bagus Nusantara
         //session_start();
+        return view('dinonaktifkan');
 
         // Authenticate here
         // redirect to MyITS SSO if not logged in
