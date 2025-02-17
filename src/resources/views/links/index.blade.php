@@ -1,33 +1,16 @@
 @extends('layouts.base')
 
 @section('css')
-<!-- <link rel='stylesheet' href='/css/admin.css'> -->
-<!-- <link rel='stylesheet' href='/css/datatables.min.css'> -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 @endsection
 
 @section('content')
-<div ng-controller="AdminCtrl" class="ng-root">
-    <div class="row row-no-gutters">
-        <div class='col-md-2'>
-            <ul class='nav nav-pills nav-stacked admin-nav' role='tablist'>
-                <li role='presentation' aria-controls="home" class='admin-nav-item active'>
-                    <a href='#home'><span class="glyphicon glyphicon-home" aria-hidden="true"></span>Home</a>
-                </li>
-                <li role='presentation' aria-controls="links" class='admin-nav-item'>
-                    <a href='#links'><span class="glyphicon glyphicon-link" aria-hidden="true"></span>Links</a>
-                </li>
-            </ul>
-        </div>
+<div>
+    <div class="row">
         <div class='col-md-10'>
             <div class="tab-content">
-                <div role="tabpanel" class="tab-pane active" id="home">
-                    <div class="page-header">
-                        <h1>Welcome {{ session('username') }}!</h1>
-                    </div>
-                    <p>Use the links on the left hand side to navigate.</p>
-                </div>
 
-                <div role="tabpanel" class="tab-pane" id="links">
+                <div role="tabpanel" class="tab-pane active" id="links">
                     <h3>Links</h3>
                     <table id="links_table" class="table table-bordered table-striped">
                         <thead>
@@ -36,7 +19,7 @@
                                 <th>URL</th>
                                 <th>Shortened URL</th>
                                 <th>Created At</th>
-                                <th>Actions</th>
+                                <th>QR Code</th>
                             </tr>
                         </thead>
                     </table>
@@ -45,29 +28,35 @@
             </div>
         </div>
     </div>
-
 </div>
 @endsection
 
 @section('js')
-{{-- Include extra JS --}}
-<script src='/js/datatables.min.js'></script>
-<script src='/js/api.js'></script>
-<script src='/js/AdminCtrl.js'></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
 <script>
 $(document).ready(function() {
     $('#links_table').DataTable({
         processing: true,
-        serverSide: true,
-        ajax: "{{ url('links/datatable') }}",
+        // serverSide: false, // Jika API tidak mendukung paginasi otomatis
+        ajax: {
+            url: "https://shortener.its.ac.id/links/datatable",
+            dataType: "json",
+            error: function(xhr, error, thrown) {
+                console.log("Error:", xhr.responseText);
+                alert("Terjadi kesalahan saat mengambil data!");
+            }
+        },
         columns: [
             { data: 'id', name: 'id' },
-            { data: 'url', name: 'url' },
-            { data: 'shortened_url', name: 'shortened_url' },
+            { data: 'long_url', name: 'long_url' },
+            { data: 'short_url', name: 'short_url' },
             { data: 'created_at', name: 'created_at' },
-            { data: 'actions', name: 'actions', orderable: false, searchable: false }
+            { data: 'qr_code', name: 'qr_code', orderable: false, searchable: false }
         ]
     });
 });
 </script>
+
 @endsection

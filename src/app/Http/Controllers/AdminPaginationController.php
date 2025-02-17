@@ -92,9 +92,6 @@ class AdminPaginationController extends Controller
 
     public function renderChangeUserRoleCell($user)
     {
-        // Add "change role" select box
-        // <select> field does not use Angular bindings
-        // because of an issue affecting fields with duplicate names.
         $role = '-';
         if ($user->role != null) {
             $role = $user->role;
@@ -151,10 +148,14 @@ class AdminPaginationController extends Controller
     public function paginateAdminUsers(Request $request)
     {
         self::ensureAdmin();
+        $user_id  = session('user_id');
+        $check = DB::table('users')->where('id',$user_id)->select('role')->first();  
+        if($check->role != 'admin'){
+            return ("You are not authorized to access this page");
+        }
 
         $admin_users = User::select(['username', 'email', 'created_at', 'active', 'api_key', 'api_active', 'api_quota', 'role', 'id']);
         return Datatables::of($admin_users)
-            // ->addColumn('api_action', [$this, 'renderAdminApiActionCell'])
             ->addColumn('toggle_active', [$this, 'renderToggleUserActiveCell'])
             ->addColumn('change_role', [$this, 'renderChangeUserRoleCell'])
             ->addColumn('delete', [$this, 'renderDeleteUserCell'])
@@ -166,9 +167,12 @@ class AdminPaginationController extends Controller
     public function paginateAdminLinks(Request $request)
     {
         self::ensureAdmin();
+        $user_id  = session('user_id');
+        $check = DB::table('users')->where('id',$user_id)->select('role')->first();  
+        if($check->role != 'admin'){
+            return ("You are not authorized to access this page");
+        }
 
-
-        // $admin_links = Link::select(['short_url', 'long_url', 'clicks', 'created_at', 'creator', 'is_disabled']);
         $admin_links = DB::table('links')
             ->leftjoin('users', 'users.id', '=', 'links.user_id')
             ->select([
@@ -184,14 +188,9 @@ class AdminPaginationController extends Controller
             ->addColumn('disable', [$this, 'renderToggleLinkActiveCell'])
             ->addColumn('delete', [$this, 'renderDeleteLinkCell'])
             ->editColumn('clicks', [$this, 'renderClicksCell'])
-            // ->editColumn('long_url', [$this, 'renderLongUrlCell'])
             ->editColumn('created_at', [$this, 'formatDateTime'])
             ->addColumn('qr_code', [$this, 'renderQrCode'])
-            // ->addColumn('usernames', [$this, 'renderQrCode'])
             ->escapeColumns(['short_url'])
-            // ->filterColumn('username', function($query, $keyword) {
-            //     // Do nothing to ignore searching this column
-            // })
             ->make(true);
     }
 
@@ -199,14 +198,11 @@ class AdminPaginationController extends Controller
     {
         self::ensureLoggedIn();
 
-        $username = session('username');
         $user_id  = session('user_id');
         $user_links = Link::where('user_id', $user_id)
             ->select(['id', 'short_url', 'long_url', 'base64', 'clicks', 'created_at']);
 
         return Datatables::of($user_links)
-            // ->editColumn('clicks', [$this, 'renderClicksCell'])
-            // ->editColumn('long_url', [$this, 'renderLongUrlCell'])
             ->editColumn('created_at', [$this, 'formatDateTime'])
             ->addColumn('qr_code', [$this, 'renderQrCode'])
             ->escapeColumns(['short_url'])

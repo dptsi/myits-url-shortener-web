@@ -239,10 +239,7 @@ class AjaxController extends Controller {
     }
 
     public function editLinkLongUrl(Request $request) {
-        /**
-         * If user is an admin, allow the user to edit the value of any link's long URL.
-         * Otherwise, only allow the user to edit their own links.
-         */
+
 
         $link_ending = $request->input('link_ending');
         $link = LinkHelper::linkExists($link_ending);
