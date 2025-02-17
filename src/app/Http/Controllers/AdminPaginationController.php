@@ -186,7 +186,10 @@ class AdminPaginationController extends Controller
             ]);
         return Datatables::of($admin_links)
             ->addColumn('disable', [$this, 'renderToggleLinkActiveCell'])
-            ->addColumn('delete', [$this, 'renderDeleteLinkCell'])
+            // ->addColumn('delete', [$this, 'renderDeleteLinkCell'])
+            ->addColumn('edit', function ($row) {
+                return '<button class="btn btn-sm btn-primary edit-link" data-short="'.$row->short_url.'" data-long="'.$row->long_url.'">Edit</button>';
+            })
             ->editColumn('clicks', [$this, 'renderClicksCell'])
             ->editColumn('created_at', [$this, 'formatDateTime'])
             ->addColumn('qr_code', [$this, 'renderQrCode'])

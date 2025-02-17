@@ -21,10 +21,8 @@
 
             <ul id="navbar" class="nav navbar-collapse collapse navbar-nav" id="nbc">
                 <li><a @if (isset($role)) href="{{ route('admin') }}#admin" @else href="{{ url('links') }}" @endif>Links 
-                
                     </a>
                 </li>
-
                 @if (empty(session('username')))
                 @else
                 <li class="visible-xs"><a href="{{ route('admin') }}">Dashboard</a></li>

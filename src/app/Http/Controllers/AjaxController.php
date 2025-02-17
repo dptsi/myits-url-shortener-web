@@ -7,7 +7,7 @@ use App\Helpers\CryptoHelper;
 use App\Helpers\UserHelper;
 use App\Models\User;
 use App\Factories\UserFactory;
-
+use DB;
 class AjaxController extends Controller {
     /**
      * Process AJAX requests.
@@ -240,10 +240,15 @@ class AjaxController extends Controller {
 
     public function editLinkLongUrl(Request $request) {
 
+        $user_id  = session('user_id');
+        $check = DB::table('users')->where('id',$user_id)->select('role')->first();  
+        if($check->role != 'admin'){
+            return ("You are not authorized to access this page");
+        }
+       
 
         $link_ending = $request->input('link_ending');
         $link = LinkHelper::linkExists($link_ending);
-
         $new_long_url = $request->input('new_long_url');
 
         $this->validate($request, [
