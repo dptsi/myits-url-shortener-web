@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -8,13 +9,16 @@ use App\Helpers\UserHelper;
 use App\Models\User;
 use App\Factories\UserFactory;
 use DB;
-class AjaxController extends Controller {
+
+class AjaxController extends Controller
+{
     /**
      * Process AJAX requests.
      *
      * @return Response
      */
-    public function checkLinkAvailability(Request $request) {
+    public function checkLinkAvailability(Request $request)
+    {
         $link_ending = $request->input('link_ending');
         $ending_conforms = LinkHelper::validateEnding($link_ending);
 
@@ -24,17 +28,16 @@ class AjaxController extends Controller {
 
         if (!$ending_conforms) {
             return "invalid";
-        }
-        else if (LinkHelper::linkExists($link_ending)) {
+        } else if (LinkHelper::linkExists($link_ending)) {
             // if ending already exists
             return "unavailable";
-        }
-        else {
+        } else {
             return "available";
         }
     }
 
-    public function toggleAPIActive(Request $request) {
+    public function toggleAPIActive(Request $request)
+    {
         self::ensureAdmin();
 
         $user_id = $request->input('user_id');
@@ -48,8 +51,7 @@ class AjaxController extends Controller {
 
         if ($current_status == 1) {
             $new_status = 0;
-        }
-        else {
+        } else {
             $new_status = 1;
         }
 
@@ -59,7 +61,8 @@ class AjaxController extends Controller {
         return $user->api_active;
     }
 
-    public function generateNewAPIKey(Request $request) {
+    public function generateNewAPIKey(Request $request)
+    {
         /**
          * If user is an admin, allow resetting of any API key
          *
@@ -84,8 +87,7 @@ class AjaxController extends Controller {
             // if user is attempting to reset another user's API key,
             // ensure they are an admin
             self::ensureAdmin();
-        }
-        else {
+        } else {
             // user is attempting to reset own key
             // ensure that user is permitted to access the API
             $user_api_enabled = $user->api_active;
@@ -103,7 +105,8 @@ class AjaxController extends Controller {
         return $user->api_key;
     }
 
-    public function editAPIQuota(Request $request) {
+    public function editAPIQuota(Request $request)
+    {
         /**
          * If user is an admin, allow the user to edit the per minute API quota of
          * any user.
@@ -124,7 +127,8 @@ class AjaxController extends Controller {
         return "OK";
     }
 
-    public function toggleUserActive(Request $request) {
+    public function toggleUserActive(Request $request)
+    {
         self::ensureAdmin();
 
         $user_id = $request->input('user_id');
@@ -138,8 +142,7 @@ class AjaxController extends Controller {
 
         if ($current_status == 1) {
             $new_status = 0;
-        }
-        else {
+        } else {
             $new_status = 1;
         }
 
@@ -149,7 +152,8 @@ class AjaxController extends Controller {
         return $user->active;
     }
 
-    public function changeUserRole(Request $request) {
+    public function changeUserRole(Request $request)
+    {
         self::ensureAdmin();
 
         $user_id = $request->input('user_id');
@@ -167,7 +171,8 @@ class AjaxController extends Controller {
         return "OK";
     }
 
-    public function addNewUser(Request $request) {
+    public function addNewUser(Request $request)
+    {
         self::ensureAdmin();
 
         $ip = $request->ip();
@@ -181,7 +186,8 @@ class AjaxController extends Controller {
         return "OK";
     }
 
-    public function deleteUser(Request $request) {
+    public function deleteUser(Request $request)
+    {
         self::ensureAdmin();
 
         $user_id = $request->input('user_id');
@@ -196,7 +202,8 @@ class AjaxController extends Controller {
         return "OK";
     }
 
-    public function deleteLink(Request $request) {
+    public function deleteLink(Request $request)
+    {
         self::ensureAdmin();
 
         $link_ending = $request->input('link_ending');
@@ -211,7 +218,8 @@ class AjaxController extends Controller {
         return "OK";
     }
 
-    public function toggleLink(Request $request) {
+    public function toggleLink(Request $request)
+    {
         self::ensureAdmin();
 
         $link_ending = $request->input('link_ending');
@@ -238,34 +246,43 @@ class AjaxController extends Controller {
         return ($new_status ? "Enable" : "Disable");
     }
 
-    public function editLinkLongUrl(Request $request) {
+    public function editLinkLongUrl(Request $request)
+    {
+
+        $allowedReferer = 'https://shortener.its.ac.id';
+        $referer = $request->headers->get('referer');
+
+        if (!$referer || strpos($referer, $allowedReferer) !== 0) {
+            return response("Unauthorized request source", 403);
+        }
 
         $user_id  = session('user_id');
-        $check = DB::table('users')->where('id',$user_id)->select('role')->first();  
-        if($check->role != 'admin'){
-            return ("You are not authorized to access this page");
-        }
-       
+        // Cek role user
+        $check = DB::table('users')->where('id', $user_id)->select('role')->first();
+        $isAdmin = ($check->role == 'admin');
 
         $link_ending = $request->input('link_ending');
-        $link = LinkHelper::linkExists($link_ending);
-        $new_long_url = $request->input('new_long_url');
-
-        $this->validate($request, [
-            'new_long_url' => 'required|url',
-        ]);
+        $link = DB::table('links')->where('short_url', $link_ending)->first();
 
         if (!$link) {
-            // abort(404, 'Link not found.');
             return view('errors.404');
         }
 
-        if ($link->creator !== session('username')) {
-            self::ensureAdmin();
+        // Jika bukan admin, cek apakah user adalah pemilik link
+        if (!$isAdmin && $link->user_id != $user_id) {
+            return response("You are not authorized to edit this link", 403);
         }
 
-        $link->long_url = $new_long_url;
-        $link->save();
-        return "OK";
+        // Validasi input URL baru
+        // $request->validate([
+        //     'new_long_url' => 'required|url',
+        // ]);
+
+        // Update URL
+        DB::table('links')->where('short_url', $link_ending)->update([
+            'long_url' => $request->input('new_long_url')
+        ]);
+
+        return response("OK", 200);
     }
 }

@@ -208,6 +208,9 @@ class AdminPaginationController extends Controller
         return Datatables::of($user_links)
             ->editColumn('created_at', [$this, 'formatDateTime'])
             ->addColumn('qr_code', [$this, 'renderQrCode'])
+            ->addColumn('edit', function ($row) {
+                return '<button class="btn btn-sm btn-primary edit-link" data-short="'.$row->short_url.'" data-long="'.$row->long_url.'">Edit</button>';
+            })
             ->escapeColumns(['short_url'])
             ->make(true);
     }

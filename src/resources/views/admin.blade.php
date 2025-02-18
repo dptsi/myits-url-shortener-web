@@ -75,7 +75,6 @@
                 </div>
                 <div class="modal-body">
                     <form id="editLinkForm">
-                        @csrf
                         <input type="hidden" id="edit_short_url">
                         <div class="form-group">
                             <label for="edit_long_url">Long URL</label>
@@ -335,7 +334,6 @@
 
         $scope.reloadLinkTables = function() {
             // Reload DataTables for affected tables
-            // without resetting page
             if ('admin_links_table' in $scope.datatables) {
                 $scope.datatables['admin_links_table'].ajax.reload(null, false);
             }
@@ -366,25 +364,6 @@
             });
         }
 
-        // Generate new API key for user_id
-        $scope.generateNewAPIKey = function($event, user_id, is_dev_tab) {
-            var el = $($event.target);
-            var status_display_elem = el.prevAll('.status-display');
-
-            if (is_dev_tab) {
-                status_display_elem = el.parent().prev().children();
-            }
-
-            apiCall('admin/generate_new_api_key', {
-                'user_id': user_id,
-            }, function(new_status) {
-                if (status_display_elem.is('input')) {
-                    status_display_elem.val(new_status);
-                } else {
-                    status_display_elem.text(new_status);
-                }
-            });
-        };
 
         $scope.checkNewUserFields = function() {
             var response = true;
@@ -398,39 +377,6 @@
             return response;
         }
 
-        $scope.addNewUser = function($event) {
-            // Allow admins to add new users
-
-            if (!$scope.checkNewUserFields()) {
-                toastr.error("Fields cannot be empty.", "Error");
-                return false;
-            }
-
-            apiCall('admin/add_new_user', {
-                'username': $scope.newUserParams.username,
-                'user_password': $scope.newUserParams.userPassword,
-                'user_email': $scope.newUserParams.userEmail,
-                'user_role': $scope.newUserParams.userRole,
-            }, function(result) {
-                toastr.success("User " + $scope.newUserParams.username + " successfully created.", "Success");
-                $('#new-user-form').clearForm();
-                $scope.datatables['admin_users_table'].ajax.reload();
-            }, function() {
-                toastr.error("An error occured while creating the user.", "Error");
-            });
-        }
-
-        // Delete user
-        $scope.deleteUser = function($event, user_id) {
-            var el = $($event.target);
-
-            apiCall('admin/delete_user', {
-                'user_id': user_id,
-            }, function(new_status) {
-                toastr.success('User successfully deleted.', 'Success');
-                $scope.reloadUserTables();
-            });
-        };
 
         $scope.changeUserRole = function(role, user_id) {
             apiCall('admin/change_user_role', {
@@ -441,27 +387,12 @@
             });
         };
 
-        // Open user API settings menu
-        $scope.openAPIModal = function($event, username, api_key, api_active, api_quota, user_id) {
-            var el = $($event.target);
-
-            $scope.modals.editUserApiInfo.push({
-                apiKey: api_key,
-                apiQuota: parseInt(api_quota),
-                userId: user_id,
-                apiActive: api_active
-            });
-
-            $timeout(function() {
-                $('#edit-user-api-info-' + user_id).modal('show');
-            });
-        };
-
         /*
             Link Management
-        */
+        
 
         // Delete link
+        /*
         $scope.deleteLink = function($event, link_ending) {
             var el = $($event.target);
 
@@ -472,6 +403,7 @@
                 $scope.reloadLinkTables();
             });
         };
+        */
 
         // Disable and enable links
         $scope.toggleLink = function($event, link_ending) {
@@ -494,17 +426,7 @@
             });
         };
 
-        // Edit links' long_url
-        $scope.editLongLink = function(link_ending, old_long_link) {
-            $scope.modals.editLongLink.push({
-                linkEnding: link_ending,
-                oldLongLink: old_long_link,
-            });
 
-            $timeout(function() {
-                $('#edit-long-link-' + link_ending).modal('show');
-            });
-        }
 
         /*
             Initialisation
