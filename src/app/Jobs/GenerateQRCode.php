@@ -23,7 +23,7 @@ class GenerateQRCode
 
         // Membuat QR code
         $qrCode = QrCode::format('png')
-            ->size(100)
+            ->size(500)
             ->margin(0)
             ->errorCorrection('H')
             ->merge('https://i.imgur.com/BHhJgMH.png', .3, true)

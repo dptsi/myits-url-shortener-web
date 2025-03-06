@@ -216,11 +216,31 @@ class AdminPaginationController extends Controller
     }
 
     //nusantara
+    // public function renderQrCode($link)
+    // {
+    //     if ($link->base64 != null) {
+    //             return ' <img src="data:image/png;base64,' . $link->base64 . '" alt="QR Code">';
+    //     }
+    //     return '<img src="https://api.qrserver.com/v1/create-qr-code/?data=https://its.id/' . $link->short_url . '&amp;size=100x100" alt="" title="" />';
+    // }
+
     public function renderQrCode($link)
-    {
-        if ($link->base64 != null) {
-                return ' <img src="data:image/png;base64,' . $link->base64 . '" alt="QR Code">';
-        }
-        return '<img src="https://api.qrserver.com/v1/create-qr-code/?data=https://its.id/' . $link->short_url . '&amp;size=100x100" alt="" title="" />';
+{
+    if ($link->base64 != null) {
+        // Menampilkan QR Code dari base64
+        $qrCode = '<img src="data:image/png;base64,' . $link->base64 . '" alt="QR Code">';
+        // Link download versi HD menggunakan base64
+        $downloadLink = '<a href="data:image/png;base64,' . $link->base64 . '" download="qr_code_hd.png">Download</a>';
+        return $qrCode . '<br>' . $downloadLink;
     }
+
+    // URL untuk QR Code biasa
+    $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=https://its.id/' . $link->short_url . '&size=100x100';
+    // URL untuk QR Code HD
+    $qrUrlHd = 'https://api.qrserver.com/v1/create-qr-code/?data=https://its.id/' . $link->short_url . '&size=500x500';
+
+    // Menampilkan QR Code dan link download HD
+    return '<img src="' . $qrUrl . '" alt="" title="" /><br><a href="' . $qrUrlHd . '" download="qr_code_hd.png">Download</a>';
+}
+
 }
