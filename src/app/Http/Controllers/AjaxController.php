@@ -204,11 +204,24 @@ class AjaxController extends Controller
 
     public function deleteLink(Request $request)
     {
-        self::ensureAdmin();
+        $allowedReferer = 'https://shortener.its.ac.id';
+        $referer = $request->headers->get('referer');
+
+        if (!$referer || strpos($referer, $allowedReferer) !== 0) {
+            return response("Unauthorized request source", 403);
+        }
+
+        $user_id  = session('user_id');
+        
+        // Cek role user
+        $check = DB::table('users')->where('id', $user_id)->select('role')->first();
+        $isAdmin = ($check->role == 'admin');
 
         $link_ending = $request->input('link_ending');
         $link = LinkHelper::linkExists($link_ending);
-
+        if (!$isAdmin && $link->user_id != $user_id) {
+            return response("You are not authorized to edit this link", 403);
+        }
         if (!$link) {
             // abort(404, 'Link not found.');
             return view('errors.404');

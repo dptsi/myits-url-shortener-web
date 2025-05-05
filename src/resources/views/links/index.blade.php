@@ -20,7 +20,7 @@
                                 <th>Shortened URL</th>
                                 <th>Created At</th>
                                 <th>QR Code</th>
-                                <th>Edit</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                     </table>
@@ -55,7 +55,7 @@
 
 @section('js')
 @include('snippets.modals')
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {{-- Include extra JS --}}
 <script src='/js/datatables.min.js'></script>
 
@@ -120,6 +120,40 @@ $(document).ready(function() {
             }
         });
     });
+
+    $(document).on('click', '.delete-link', function () {
+    let shortUrl = $(this).data('short_url');
+    console.log(shortUrl);
+    Swal.fire({
+        title: 'Yakin ingin menghapus?',
+        text: "Data tidak bisa dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#aaa',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/links/delete/',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    link_ending: shortUrl,
+                },
+                success: function(response) {
+                    Swal.fire('Terhapus!', 'Data berhasil dihapus.', 'success');
+                    $('#links_table').DataTable().ajax.reload(); // reload datatable
+                },
+                error: function() {
+                    Swal.fire('Gagal', 'Terjadi kesalahan saat menghapus.', 'error');
+                }
+            });
+        }
+    });
+});
+    
 });
 </script>
 @endsection

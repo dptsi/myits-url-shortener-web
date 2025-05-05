@@ -20,6 +20,7 @@ $app->get('/admin', ['as' => 'admin', 'uses' => 'AdminController@displayAdminPag
 $app->get('/links', ['uses' => 'LinkController@index']);
 $app->get('/links/datatable', ['as' => 'api_get_user_links', 'uses' => 'AdminPaginationController@paginateUserLinks']);
 $app->post('/links/edit_url', ['as' => 'api_edit_link_long_url', 'uses' => 'AjaxController@editLinkLongUrl']);
+$app->post('links/delete', ['as' => 'api_delete_link', 'uses' => 'AjaxController@deleteLink']);
 
 // $app->get('/links/datatable', ['uses' => 'LinkController@getDatatable']);
 // $app->get('/setup/finish', ['as' => 'setup_finish', 'uses' => 'SetupController@finishSetup']);
