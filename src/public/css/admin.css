@@ -75,6 +75,20 @@ a.btn.delete-button-custom:hover {
     color: #fff;
 }
 
+.qr-thumb {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 2px;
+    transition: opacity 0.2s;
+}
+.qr-thumb:hover {
+    opacity: 0.75;
+}
+.qr-download {
+    font-size: 0.85em;
+    white-space: nowrap;
+}
+
 .pagination > li > a {
 	z-index: 2;
 	color: #000;

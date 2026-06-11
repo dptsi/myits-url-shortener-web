@@ -56,6 +56,26 @@ We would like to thank Oregon State University's Open Source Lab for providing r
 
 Thank you to [lastspark](https://thenounproject.com/lastspark/) for providing our logo's icon.
 
+### QR Code Generation
+
+Generate QR codes for shortened links:
+
+```bash
+# Generate single QR code
+docker compose exec -T myits-url-shortener-web php generate-qr.php <short_url>
+
+# Bulk generate for all links without QR codes
+docker compose exec -T myits-url-shortener-web php bulk-generate-qrcode
+
+# With options
+docker compose exec -T myits-url-shortener-web php bulk-generate-qrcode --limit=50     # Only 50 links
+docker compose exec -T myits-url-shortener-web php bulk-generate-qrcode --force       # Regenerate all
+docker compose exec -T myits-url-shortener-web php bulk-generate-qrcode --short-url=abc123  # Specific URL
+docker compose exec -T myits-url-shortener-web php bulk-generate-qrcode --quiet       # Minimal output
+```
+
+**Note:** The `php artisan qrcode:generate` command is disabled due to a PHP 7.3 compatibility issue. Use the standalone scripts above instead.
+
 #### Versioning
 
 Polr uses [Semantic Versioning](http://semver.org/)

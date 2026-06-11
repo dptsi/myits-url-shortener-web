@@ -14,6 +14,7 @@ $app->get('/logout_oidc', ['as' => 'logout_oidc', 'uses' => 'OpenidController@pe
 $app->get('/login', ['as' => 'login', 'uses' => 'OpenidController@performLogin']);
 $app->get('/generate-qrbase64', ['as' => 'generate-qrbase64', 'uses' => 'GenerateController@index']);
 $app->get('/generate-qrbase64/{short_url}', ['as' => 'generate-qrbase64-show', 'uses' => 'GenerateController@show']);
+$app->get('/generate-qr', ['as' => 'generate-qr', 'uses' => 'GenerateController@generate']);
 $app->get('/shorten_result/{short_url}', ['as' => 'shorten_result', 'uses' => 'LinkController@showShortenResult']);
 
 $app->get('/admin', ['as' => 'admin', 'uses' => 'AdminController@displayAdminPage']);

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker exec *)",
+      "Bash(docker cp *)",
+      "Bash(docker ps *)",
+      "Bash(docker compose down)",
+      "Bash(docker compose build *)",
+      "Bash(docker run *)",
+      "Bash(sleep *)",
+      "Bash(docker network *)",
+      "Bash(true)",
+      "Bash(docker rm *)"
+    ]
+  },
+  "$version": 4
+}

@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        \Torann\GeoIP\Console\Update::class
+        \Torann\GeoIP\Console\Update::class,
+        // GenerateQRCodes disabled due to PHP 7.3 segfault — use bulk-generate-qrcode instead
     ];
 
     /**

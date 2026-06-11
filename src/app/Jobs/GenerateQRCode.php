@@ -26,7 +26,7 @@ class GenerateQRCode
             ->size(500)
             ->margin(0)
             ->errorCorrection('H')
-            ->merge('https://i.imgur.com/BHhJgMH.png', .3, true)
+            ->merge('/var/www/html/public/img/logo.png', .3, true)
             ->generate($url);
 
         // Mengonversi QR code ke Base64

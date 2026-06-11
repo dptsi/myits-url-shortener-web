@@ -228,12 +228,33 @@ class AdminPaginationController extends Controller
 
     public function renderQrCode($link)
 {
+    $shortUrl = $link->short_url;
+    $modalId = 'qrModal_' . preg_replace('/[^a-zA-Z0-9]/', '_', $shortUrl);
+
     if ($link->base64 != null) {
-        // Menampilkan QR Code dari base64
-        $qrCode = '<img src="data:image/png;base64,' . $link->base64 . '" alt="QR Code">';
-        // Link download versi HD menggunakan base64
-        $downloadLink = '<a href="data:image/png;base64,' . $link->base64 . '" download="qr_code_hd.png">Download</a>';
-        return $qrCode . '<br>' . $downloadLink;
+        $qrDataUri = 'data:image/png;base64,' . $link->base64;
+        // Thumbnail kecil -- klik buka modal HD
+        $qrCode = '<img src="' . $qrDataUri . '" alt="QR Code" class="qr-thumb" '
+                . 'style="width:100px;height:100px;cursor:pointer" '
+                . 'data-toggle="modal" data-target="#' . $modalId . '">';
+        $downloadLink = '<a href="' . $qrDataUri . '" download="qr_code_hd.png" class="qr-download">Download</a>';
+
+        // Modal untuk tampilan HD
+        $modal = '<div id="' . $modalId . '" class="modal fade" tabindex="-1" role="dialog">'
+               . '<div class="modal-dialog modal-sm" role="document">'
+               . '<div class="modal-content">'
+               . '<div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>'
+               . '<h5 class="modal-title">QR Code HD — ' . e($shortUrl) . '</h5></div>'
+               . '<div class="modal-body text-center">'
+               . '<img src="' . $qrDataUri . '" alt="QR Code HD" style="max-width:100%">'
+               . '</div>'
+               . '<div class="modal-footer">'
+               . '<a href="' . $qrDataUri . '" download="qr_code_hd.png" class="btn btn-primary">Download HD</a>'
+               . '<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'
+               . '</div>'
+               . '</div></div></div>';
+
+        return $qrCode . '<br>' . $downloadLink . $modal;
     }
 
     // URL untuk QR Code biasa

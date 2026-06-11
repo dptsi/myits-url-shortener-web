@@ -2,7 +2,10 @@ services:
 
     myits-url-shortener-web:
         container_name: myits-url-shortener-web
-        image: dptsi/laravel-web-dev:7.3
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: myits-url-shortener-web:7.3
         volumes:
             - ./src:/var/www/html
         environment:

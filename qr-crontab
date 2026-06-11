@@ -1,0 +1,5 @@
+# Crontab untuk generate QR code otomatis (busybox crond, Alpine)
+# Format: menit jam tgl bln hari-pekan  perintah
+#
+# Jalankan tiap jam pada menit ke-5.
+5 * * * * /var/www/html/qr-cron.sh
