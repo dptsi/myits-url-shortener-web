@@ -47,14 +47,19 @@ for arg in "$@"; do
     esac
 done
 
-# ─── Deteksi lingkungan: di dalam container atau di host ───────────────────────
-# Di dalam container: jalankan php/curl langsung. Di host: bungkus dgn docker exec.
-if [[ -f /.dockerenv ]]; then
+# ─── Deteksi lingkungan: bisa jalan lokal atau harus lewat docker exec ─────────
+# Kalau aplikasi tersedia lokal (php + bootstrap Lumen di /var/www/html), jalankan
+# langsung — ini berlaku di dalam container Docker MAUPUN Pod Kubernetes
+# (containerd/CRI-O tidak punya /.dockerenv). Kalau tidak, anggap kita di host
+# dan bungkus tiap perintah dengan `docker exec`.
+APP_DIR="/var/www/html"
+if command -v php >/dev/null 2>&1 && [[ -f "$APP_DIR/bootstrap/app.php" ]]; then
     IN_CONTAINER=1
 else
     IN_CONTAINER=0
     if ! command -v docker >/dev/null 2>&1; then
-        echo "[ERROR] Perintah 'docker' tidak ada. Jalankan script ini dari dalam container, atau install docker di host." >&2
+        echo "[ERROR] Aplikasi tidak ditemukan lokal dan perintah 'docker' juga tidak ada." >&2
+        echo "        Jalankan script ini dari dalam container/Pod, atau dari host yang punya docker." >&2
         exit 1
     fi
     if ! docker ps --format '{{.Names}}' | grep -qx "$CONTAINER"; then
