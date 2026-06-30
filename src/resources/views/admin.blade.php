@@ -7,28 +7,13 @@
 
 @section('content')
 <div ng-controller="AdminCtrl" class="ng-root">
-    <div class="row row-no-gutters">
-        <div class='col-md-2'>
-            <ul class='nav nav-pills nav-stacked admin-nav' role='tablist'>
-                <li role='presentation' aria-controls="home" class='admin-nav-item active'>
-                    <a href='#home'><span class="glyphicon glyphicon-home" aria-hidden="true"></span>Home</a>
-                </li>
-
-                @if ($role == $admin_role)
-                <li role='presentation' class='admin-nav-item'>
-                    <a href='#admin'><span class="glyphicon glyphicon-user" aria-hidden="true"></span>Admin</a>
-                </li>
-                @endif
-
-            </ul>
-        </div>
-        <div class='col-md-10'>
+    <div class="row">
+        <div class='col-md-12'>
             <div class="tab-content">
-                <div role="tabpanel" class="tab-pane active" id="home">
+                <div role="tabpanel" class="tab-pane" id="home">
                     <div class="page-header">
                         <h1>Welcome {{ session('username') }}!</h1>
                     </div>
-                    <p>Use the links on the left hand side to navigate.</p>
                 </div>
 
                 <!-- <div role="tabpanel" class="tab-pane" id="links">
@@ -40,17 +25,24 @@
 
 
                 @if ($role == $admin_role)
-                <div role="tabpanel" class="tab-pane" id="admin">
-                    <h3>Links</h3>
-                    @include('snippets.link_table', [
-                    'table_id' => 'admin_links_table'
-                    ])
+                <div role="tabpanel" class="tab-pane active" id="admin">
+                    <div class="admin-card">
+                        <h3><i class="fa fa-link" aria-hidden="true"></i>&nbsp; Links</h3>
+                        <div class="table-responsive">
+                            @include('snippets.link_table', [
+                                'table_id' => 'admin_links_table'
+                            ])
+                        </div>
+                    </div>
 
-                    <h3>Users</h3>
-                    @include('snippets.user_table', [
-                    'table_id' => 'admin_users_table'
-                    ])
-
+                    <div class="admin-card">
+                        <h3><i class="fa fa-users" aria-hidden="true"></i>&nbsp; Users</h3>
+                        <div class="table-responsive">
+                            @include('snippets.user_table', [
+                                'table_id' => 'admin_users_table'
+                            ])
+                        </div>
+                    </div>
                 </div>
                 @endif
 
@@ -66,12 +58,12 @@
             generate-new-api-key="generateNewAPIKey" clean-modals="cleanModals"></edit-user-api-info>
     </div> -->
 
-    <div id="editModal" class="modal fade" tabindex="-1">
+    <div id="editModal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Edit Link</h5>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit Link</h4>
                 </div>
                 <div class="modal-body">
                     <form id="editLinkForm">
@@ -276,19 +268,24 @@
                 $scope.datatables['admin_links_table'] = $('#admin_links_table').DataTable($.extend({
                     "ajax": BASE_API_PATH + 'admin/get_admin_links',
 
-                    "columns": [{
-                            className: 'wrap-text',
-                            data: 'short_url',
-                            name: 'short_url'
-                        },
+                    "columns": [
                         {
-                            className: 'wrap-text',
+                            className: 'col-long-url',
                             data: 'long_url',
-                            name: 'long_url'
+                            name: 'long_url',
+                            render: function(data) {
+                                var escaped = $('<div>').text(data).html();
+                                return '<span title="' + escaped + '">' + escaped + '</span>';
+                            }
                         },
                         {
                             data: 'clicks',
                             name: 'clicks'
+                        },
+                        {
+                            className: 'col-short-url wrap-text',
+                            data: 'short_url',
+                            name: 'short_url'
                         },
                         {
                             data: 'created_at',
@@ -296,6 +293,7 @@
                             searchable: false
                         },
                         {
+                            className: 'col-qr',
                             data: 'qr_code',
                             name: 'qr_code',
                             searchable: false
@@ -307,14 +305,9 @@
                             searchable: false
                         },
                         {
-                            data: 'edit',
-                            name: 'edit',
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            data: 'disable',
-                            name: 'disable',
+                            className: 'col-actions',
+                            data: 'action',
+                            name: 'action',
                             orderable: false,
                             searchable: false
                         },

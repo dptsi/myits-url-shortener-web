@@ -1,3 +1,80 @@
+/* ===== Card style (senada dengan /links) ===== */
+.admin-card {
+    background: #ffffff;
+    border: 1px solid #dde3ea;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    padding: 28px 28px 20px;
+    margin-bottom: 28px;
+}
+
+.admin-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a2a3a;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #e8ecf0;
+}
+
+/* Kolom URL panjang — fixed width, truncate */
+#admin_links_table td.col-long-url,
+#admin_links_table th.col-long-url {
+    max-width: 220px;
+    min-width: 120px;
+    width: 220px;
+}
+
+#admin_links_table td.col-long-url {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+}
+
+#admin_links_table td.col-short-url {
+	min-width: 160px;
+	width: 180px;
+}
+
+#admin_links_table td.col-actions {
+    white-space: nowrap;
+    width: 180px;
+}
+
+#admin_links_table td.col-qr {
+    text-align: center;
+    width: 100px;
+}
+
+/* DataTable overrides agar menyatu dengan card */
+#admin_links_table.dataTable thead th,
+#admin_users_table.dataTable thead th {
+    background-color: #f4f7fa;
+    color: #445566;
+    font-weight: 600;
+    font-size: 13px;
+    border-bottom: 2px solid #dde3ea;
+}
+
+#admin_links_table.dataTable tbody tr:hover,
+#admin_users_table.dataTable tbody tr:hover {
+    background-color: #f0f5ff;
+}
+
+div.dataTables_wrapper div.dataTables_filter input {
+    border-radius: 4px;
+    border: 1px solid #cdd5de;
+    padding: 4px 8px;
+}
+
+div.dataTables_wrapper div.dataTables_length select {
+    border-radius: 4px;
+    border: 1px solid #cdd5de;
+}
+/* ===== end card style ===== */
+
 .admin-nav-item {
     margin-bottom: 5px;
 }

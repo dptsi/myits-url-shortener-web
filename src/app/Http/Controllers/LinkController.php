@@ -27,21 +27,55 @@ class LinkController extends Controller {
         $role = session('role');
         return view('links.index',compact('role'));
     }
-    public function getDatatable()
+    public function getDatatable(Request $request)
     {
-        $role = session('role');
-        $query = Link::query();
-        
+        $user_id = UserHelper::getUserID(session('sso_id'));
+        $links = Link::where('user_id', $user_id)
+            ->select(['id', 'short_url', 'long_url', 'base64', 'clicks', 'created_at']);
 
-        if ($role == 'admin') {
-            $links = $query->get();
-        } else {
-            $user_id = UserHelper::getUserID(session('sso_id'));
-            $links = $query->where('user_id', $user_id);
+        return Datatables::of($links)
+            ->addColumn('qr_code', [$this, 'renderQrCode'])
+            ->addColumn('edit', function ($row) {
+                return '<button class=\"btn btn-sm btn-primary edit-link\" data-short=\"'.$row->short_url.'\" data-long=\"'.$row->long_url.'\">Edit</button>'
+                    . '<button class=\"btn btn-sm btn-danger delete-link\" data-short_url=\"'.$row->short_url.'\">Delete</button>';
+            })
+            ->escapeColumns(['short_url'])
+            ->make(true);
+    }
+
+    public function renderQrCode($link)
+    {
+        $shortUrl = $link->short_url;
+        $modalId = 'qrModal_' . preg_replace('/[^a-zA-Z0-9]/', '_', $shortUrl);
+
+        if ($link->base64 != null) {
+            $qrDataUri = 'data:image/png;base64,' . $link->base64;
+            $qrCode = '<img src=\"' . $qrDataUri . '\" alt=\"QR Code\" class=\"qr-thumb\" '
+                    . 'style=\"width:100px;height:100px;cursor:pointer\" '
+                    . 'data-toggle=\"modal\" data-target=\"#' . $modalId . '\">';
+            $downloadLink = '<a href=\"' . $qrDataUri . '\" download=\"qr_code_hd.png\" class=\"qr-download\">Download</a>';
+
+            $modal = '<div id=\"' . $modalId . '\" class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">'
+                   . '<div class=\"modal-dialog modal-sm\" role=\"document\">'
+                   . '<div class=\"modal-content\">'
+                   . '<div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>'
+                   . '<h5 class=\"modal-title\">QR Code HD — ' . e($shortUrl) . '</h5></div>'
+                   . '<div class=\"modal-body text-center\">'
+                   . '<img src=\"' . $qrDataUri . '\" alt=\"QR Code HD\" style=\"max-width:100%\">'
+                   . '</div>'
+                   . '<div class=\"modal-footer\">'
+                   . '<a href=\"' . $qrDataUri . '\" download=\"qr_code_hd.png\" class=\"btn btn-primary\">Download HD</a>'
+                   . '<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Tutup</button>'
+                   . '</div>'
+                   . '</div></div></div>';
+
+            return $qrCode . '<br>' . $downloadLink . $modal;
         }
-        // dd($links);
 
-        return Datatables::of($links)->make(true);
+        $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=https://its.id/' . $link->short_url . '&size=100x100';
+        $qrUrlHd = 'https://api.qrserver.com/v1/create-qr-code/?data=https://its.id/' . $link->short_url . '&size=500x500';
+
+        return '<img src=\"' . $qrUrl . '\" alt=\"\" title=\"\" /><br><a href=\"' . $qrUrlHd . '\" download=\"qr_code_hd.png\">Download</a>';
     }
 
     public function performShorten(Request $request) {
