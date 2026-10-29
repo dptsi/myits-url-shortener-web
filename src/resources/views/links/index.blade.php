@@ -4,7 +4,7 @@
 
 @section('page_actions')
 <a href="{{ route('index') }}" class="btn btn-primary d-inline-flex align-items-center gap-1">
-    <span class="ms-rounded tx-18">add_link</span> Buat Tautan
+    <span class="ms-rounded tx-18">add</span> Buat Tautan
 </a>
 @endsection
 
