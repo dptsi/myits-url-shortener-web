@@ -113,7 +113,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             @endif
             <a href="{{ route('index') }}" class="d-flex justify-content-center align-items-center @if ($logged_in) mg-l-45 @else mg-l-10 @endif mg-lg-l-0 gap-1 pd-l-3 rounded-5" style="transition: margin-left .25s ease-in-out;">
                 <img src="/mids/assets/img/logo-myits.svg" class="wd-50 mg-t-4 mg-md-t-4 logo-myits" alt="myITS">
-                <p class="tx-figtree tx-medium tx-color-01 mg-b-0 text-truncate" style="font-size: 19px; max-width: 150px;" title="{{ env('APP_NAME') }}">{{ env('APP_SHORT_NAME', 'Shortener') }}</p>
+                <p class="tx-figtree tx-medium tx-color-01 mg-b-0 text-truncate" style="font-size: 19px; max-width: 170px;" title="{{ env('APP_NAME') }}">{{ env('APP_SHORT_NAME', 'Link Shortener') }}</p>
             </a>
         </div>
     </div>
