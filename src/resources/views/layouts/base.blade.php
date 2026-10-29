@@ -19,6 +19,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 @php
     $logged_in = !empty(session('username'));
     $is_admin = session('role') == 'admin';
+    // Foto profil dari klaim `picture` SSO myITS, foto default jika tidak ada
+    $avatar_default = '/mids/assets/img/profile-default.png';
+    $avatar = session('picture') ?: $avatar_default;
     $menu = [
         ['url' => route('index'), 'active' => request()->is('/') || request()->is('shorten*'), 'icon' => 'add_link', 'label' => 'Buat Tautan'],
         ['url' => url('links'), 'active' => request()->is('links*'), 'icon' => 'link', 'label' => 'Tautan Saya'],
@@ -74,12 +77,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                             {{ session('username') }}
                         </p>
                     </div>
-                    <div class="avatar avatar-sm wd-30 ht-30"><img src="/mids/assets/img/profile-default.png" class="rounded-circle wd-30 ht-30 bd" alt=""></div>
+                    <div class="avatar avatar-sm wd-30 ht-30"><img src="{{ $avatar }}" onerror="this.onerror=null;this.src='{{ $avatar_default }}'" class="rounded-circle wd-30 ht-30 bd" style="object-fit: cover;" alt=""></div>
                 </a>
                 <div class="allow-focus dropdown-menu dropdown-menu-right overflow-y-auto scrollbar-rounded wd-300-f" style="max-height: calc(100vh - 70px);">
                     <div class="pd-y-15-f d-flex flex-column justify-content-center align-items-center gap-3">
                         <div class="avatar avatar-xl">
-                            <img src="/mids/assets/img/profile-default.png" class="rounded-circle" alt="">
+                            <img src="{{ $avatar }}" onerror="this.onerror=null;this.src='{{ $avatar_default }}'" class="rounded-circle" style="object-fit: cover;" alt="">
                         </div>
                         <div class="media-body wd-100p d-flex flex-column justify-content-center align-items-center">
                             <span class="tx-15 tx-figtree tx-semibold tx-center crop-text-2">{{ session('username') }}</span>

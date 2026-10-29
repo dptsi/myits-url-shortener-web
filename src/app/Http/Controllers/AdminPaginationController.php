@@ -125,18 +125,33 @@ class AdminPaginationController extends Controller
 
     public function renderToggleLinkActiveCell($link)
     {
-        // Add "Disable/Enable" action buttons
-        $btn_class = 'btn-outline-danger';
-        $btn_text = 'Disable';
+        // Item menu "Nonaktifkan/Aktifkan" pada dropdown aksi
+        $item_class = 'tx-danger';
+        $item_icon = 'block';
+        $item_text = 'Nonaktifkan';
 
         if ($link->is_disabled) {
-            $btn_class = 'btn-outline-success';
-            $btn_text = 'Enable';
+            $item_class = 'tx-success';
+            $item_icon = 'check_circle';
+            $item_text = 'Aktifkan';
         }
 
-        return '<a ng-click="toggleLink($event, \'' . e($link->short_url) . '\')" class="btn btn-sm ' . $btn_class . '">
-            ' . $btn_text . '
-        </a>';
+        return '<a href="#" ng-click="toggleLink($event, \'' . e($link->short_url) . '\')" class="dropdown-item d-flex align-items-center gap-2 ' . $item_class . '">'
+            . '<span class="ms-rounded tx-18">' . $item_icon . '</span> <span class="action-label">' . $item_text . '</span></a>';
+    }
+
+    // Tombol titik tiga (more_vert) berisi item-item dropdown aksi
+    public function renderActionMenu(array $items)
+    {
+        return '<div class="dropdown">'
+            . '<button type="button" class="btn btn-icon btn-sm rounded-circle bd-0 d-flex align-items-center" data-toggle="dropdown" data-boundary="window" aria-label="Aksi"><span class="ms-rounded tx-20">more_vert</span></button>'
+            . '<div class="dropdown-menu dropdown-menu-right">' . implode('', $items) . '</div>'
+            . '</div>';
+    }
+
+    public function renderEditLinkItem($link)
+    {
+        return '<a href="#" class="dropdown-item d-flex align-items-center gap-2 edit-link" data-short="'.e($link->short_url).'" data-long="'.e($link->long_url).'"><span class="ms-rounded tx-18">edit</span> Ubah</a>';
     }
 
     public function formatDateTime($link)
@@ -156,6 +171,16 @@ class AdminPaginationController extends Controller
         }
 
         $admin_users = User::select(['username', 'email', 'created_at', 'active', 'api_key', 'api_active', 'api_quota', 'role', 'id']);
+
+        // Filter peran: 'admin' atau 'default' (pengguna biasa, role kosong/NULL)
+        $role_filter = $request->input('role');
+        if ($role_filter === 'admin') {
+            $admin_users->where('role', UserHelper::$USER_ROLES['admin']);
+        } elseif ($role_filter === 'default') {
+            $admin_users->where(function ($query) {
+                $query->whereNull('role')->orWhere('role', UserHelper::$USER_ROLES['default']);
+            });
+        }
         return Datatables::of($admin_users)
             ->addColumn('toggle_active', $this->renderToggleUserActiveCell(...))
             ->addColumn('change_role', $this->renderChangeUserRoleCell(...))
@@ -188,9 +213,10 @@ class AdminPaginationController extends Controller
         return Datatables::of($admin_links)
             // ->addColumn('delete', $this->renderDeleteLinkCell(...))
             ->addColumn('action', function ($row) {
-                $disableBtn = (new self)->renderToggleLinkActiveCell($row);
-                $editBtn = '<button class="btn btn-sm btn-outline-primary edit-link d-inline-flex align-items-center gap-1" data-short="'.e($row->short_url).'" data-long="'.e($row->long_url).'"><span class="ms-rounded tx-16">edit</span> Ubah</button>';
-                return '<div class="d-flex gap-1">' . $editBtn . $disableBtn . '</div>';
+                return $this->renderActionMenu([
+                    $this->renderEditLinkItem($row),
+                    $this->renderToggleLinkActiveCell($row),
+                ]);
             })
             ->editColumn('clicks', $this->renderClicksCell(...))
             ->editColumn('created_at', $this->formatDateTime(...))
@@ -211,10 +237,10 @@ class AdminPaginationController extends Controller
             ->editColumn('created_at', $this->formatDateTime(...))
             ->addColumn('qr_code', $this->renderQrCode(...))
             ->addColumn('edit', function ($row) {
-                return '<div class="d-flex gap-1">'
-                    . '<button class="btn btn-sm btn-outline-primary edit-link d-inline-flex align-items-center gap-1" data-short="'.e($row->short_url).'" data-long="'.e($row->long_url).'"><span class="ms-rounded tx-16">edit</span> Ubah</button>'
-                    . '<button class="btn btn-sm btn-outline-danger delete-link d-inline-flex align-items-center gap-1" data-short_url="'.e($row->short_url).'"><span class="ms-rounded tx-16">delete</span> Hapus</button>'
-                    . '</div>';
+                return $this->renderActionMenu([
+                    $this->renderEditLinkItem($row),
+                    '<a href="#" class="dropdown-item d-flex align-items-center gap-2 tx-danger delete-link" data-short_url="'.e($row->short_url).'"><span class="ms-rounded tx-18">delete</span> Hapus</a>',
+                ]);
             })
             ->escapeColumns(['short_url'])
             ->make(true);

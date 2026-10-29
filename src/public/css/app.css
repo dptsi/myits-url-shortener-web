@@ -35,7 +35,7 @@
 /* Form buat tautan: tata letak mengikuti form lama */
 .long-link-input { margin-bottom: 25px; }
 .custom-url-group { width: auto; flex: 0 1 auto; flex-wrap: nowrap; }
-.custom-url-group .custom-url-field { flex: 0 1 220px; width: 220px; min-width: 0; }
+.custom-url-group .custom-url-field { flex: 0 1 400px; width: 400px; min-width: 0; }
 #shorten { min-width: 300px; }
 @media (max-width: 500px) {
     .custom-url-group, .custom-url-group .custom-url-field { flex: 1 1 auto; width: 100%; }

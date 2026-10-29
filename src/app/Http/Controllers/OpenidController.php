@@ -170,7 +170,8 @@ class OpenidController extends Controller
             'email' => $email,
             'role' => $role,
             'user_id' => $user_id,
-            'role_group' => $group
+            'role_group' => $group,
+            'picture' => $userInfo->picture ?? null
         ]);
     }
 

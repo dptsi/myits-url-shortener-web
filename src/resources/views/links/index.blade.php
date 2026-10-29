@@ -66,7 +66,8 @@ $(document).ready(function() {
     });
 
     // Klik tombol edit
-    $(document).on('click', '.edit-link', function() {
+    $(document).on('click', '.edit-link', function(e) {
+        e.preventDefault();
         var shortUrl = $(this).data('short');
         var longUrl  = $(this).data('long');
         $('#edit_short_url').val(shortUrl);
@@ -104,7 +105,8 @@ $(document).ready(function() {
     });
 
     // Tombol delete
-    $(document).on('click', '.delete-link', function() {
+    $(document).on('click', '.delete-link', function(e) {
+        e.preventDefault();
         var shortUrl = $(this).data('short_url');
         Swal.fire({
             title: 'Yakin ingin menghapus?',

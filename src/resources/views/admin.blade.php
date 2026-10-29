@@ -31,6 +31,14 @@
         <div role="tabpanel" class="tab-pane fade" id="admin-users">
             <div class="card bd-0">
                 <div class="card-body">
+                    <div class="d-flex flex-wrap align-items-center gap-2 mg-b-15">
+                        <label for="filter-user-role" class="tx-medium mg-b-0">Filter peran</label>
+                        <select id="filter-user-role" class="custom-select wd-auto">
+                            <option value="">Semua</option>
+                            <option value="admin">Admin</option>
+                            <option value="default">Pengguna</option>
+                        </select>
+                    </div>
                     @include('snippets.user_table', [
                         'table_id' => 'admin_users_table'
                     ])
@@ -190,7 +198,12 @@
 
             if ($('#admin_users_table').length) {
                 $scope.datatables['admin_users_table'] = $('#admin_users_table').DataTable($.extend({
-                    "ajax": BASE_API_PATH + 'admin/get_admin_users',
+                    "ajax": {
+                        url: BASE_API_PATH + 'admin/get_admin_users',
+                        data: function(d) {
+                            d.role = $('#filter-user-role').val();
+                        }
+                    },
 
                     "columns": [{
                             className: 'wrap-text',
@@ -365,22 +378,17 @@
 
         // Disable and enable links
         $scope.toggleLink = function($event, link_ending) {
-            var el = $($event.target);
-            var curr_action = el.text();
+            $event.preventDefault();
+            var curr_action = $.trim($($event.currentTarget).find('.action-label').text());
 
             apiCall('admin/toggle_link', {
                 'link_ending': link_ending,
-            }, function(next_action) {
-                toastr.success(curr_action + " was successful.", "Success");
-                if (next_action == 'Disable') {
-                    el.removeClass('btn-outline-success');
-                    el.addClass('btn-outline-danger');
-                } else {
-                    el.removeClass('btn-outline-danger');
-                    el.addClass('btn-outline-success');
-                }
-
-                el.text(next_action);
+            }, function() {
+                toastr.success('Tautan berhasil di' + curr_action.toLowerCase() + '.', 'Berhasil');
+                // Muat ulang agar label menu mengikuti status tautan terbaru
+                $scope.datatables['admin_links_table'].ajax.reload(null, false);
+            }, function() {
+                toastr.error('Gagal mengubah status tautan.', 'Error');
             });
         };
 
@@ -416,13 +424,18 @@
             });
 
             $scope.initTables();
+
+            $('#filter-user-role').on('change', function() {
+                $scope.datatables['admin_users_table'].ajax.reload();
+            });
         };
 
         $scope.init();
 
 
         //nusantara
-        $(document).on('click', '.edit-link', function() {
+        $(document).on('click', '.edit-link', function(e) {
+            e.preventDefault();
             var shortUrl = $(this).data('short');
             var longUrl = $(this).data('long');
             console.log(shortUrl);
