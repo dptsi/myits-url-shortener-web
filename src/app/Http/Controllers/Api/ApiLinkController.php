@@ -21,7 +21,7 @@ class ApiLinkController extends ApiController {
 
     public function shortenLink(Request $request) {
         $response_type = $request->input('response_type');
-        $user = $request->user;
+        $user = $request->attributes->get('api_user');
 
         $validator = \Validator::make(array_merge([
             'url' => str_replace(' ', '%20', $request->input('url'))

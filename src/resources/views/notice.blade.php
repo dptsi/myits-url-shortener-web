@@ -1,6 +1,11 @@
 @extends('layouts.base')
 
+@section('page_title', 'Pemberitahuan')
+
 @section('content')
-<h2>Notice</h2>
-<h4>{{$message}}</h4>
+<div class="card bd-0">
+    <div class="card-body">
+        <p class="mg-b-0">{{$message}}</p>
+    </div>
+</div>
 @endsection

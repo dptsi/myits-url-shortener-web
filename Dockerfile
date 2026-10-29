@@ -1,4 +1,4 @@
-FROM dptsi/laravel-web-dev:7.3
+FROM dptsi/laravel-web-dev:8.5
 
 # Install required system libraries and tools
 RUN apk --no-cache add \
@@ -11,21 +11,21 @@ RUN apk --no-cache add \
     libxpm-dev \
     freetype-dev \
     libltdl \
-    libmcrypt-dev \
     tmux \
     bash \
     curl \
-    busybox-suid
+    busybox-suid \
+    $PHPIZE_DEPS
 
-# Install GD extension with Alpine Linux-specific configuration
+# Rebuild GD with FreeType/JPEG/WebP/XPM support (PHP >= 7.4 flag syntax)
 RUN docker-php-ext-configure gd \
-    --with-freetype-dir=/usr/include/ \
-    --with-jpeg-dir=/usr/include/ \
-    --with-webp-dir=/usr/include/ \
-    --with-xpm-dir=/usr/include/ \
+    --with-freetype \
+    --with-jpeg \
+    --with-webp \
+    --with-xpm \
     && docker-php-ext-install gd
 
-# Install Imagick extension
+# Install Imagick extension (dipakai simple-qrcode untuk format PNG)
 RUN pecl install imagick \
     && docker-php-ext-enable imagick
 
@@ -34,16 +34,16 @@ COPY src /var/www/html/
 
 # Create storage directories and set permissions
 RUN mkdir -p \
-    storage/cache \
-    storage/framework \
+    storage/app \
     storage/framework/sessions \
     storage/framework/views \
-    storage/framework/cache \
+    storage/framework/cache/data \
     storage/logs \
-    && chmod -R ugo+rw storage/
+    bootstrap/cache \
+    && chmod -R ugo+rw storage/ bootstrap/cache/
 
-# Install required Composer packages
-RUN composer require illuminate/redis:* --with-all-dependencies
+# Install Composer packages
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Jalankan skrip saat container dimulai
 RUN chmod +x /var/www/html/hit_api.sh

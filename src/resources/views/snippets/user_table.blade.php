@@ -1,12 +1,12 @@
-<table id="{{$table_id}}" class="table table-hover">
+<table id="{{$table_id}}" class="table table-hover" style="width:100%">
     <thead>
         <tr>
-            <th>Name</th>
+            <th>Nama</th>
             <th>Email</th>
-            <th>Created At</th>
-            <th>Activated</th>
+            <th>Dibuat</th>
+            <th>Status</th>
             {{-- <th>API</th> --}}
-            <th>Role</th>
+            <th>Peran</th>
             {{-- <th>Delete</th> --}}
         </tr>
     </thead>

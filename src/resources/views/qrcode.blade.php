@@ -1,14 +1,11 @@
 @extends('layouts.base')
 
-@section('css')
-<link rel='stylesheet' href='/css/shorten_result.css' />
-@endsection
+@section('page_title', 'QR Code')
 
 @section('content')
-<h3><strong>QRCODE</strong></h3>
-<div class="row mt-5 text-center">
-    {!! $qrcode !!}
+<div class="card bd-0">
+    <div class="card-body tx-center">
+        {!! $qrcode !!}
+    </div>
 </div>
 @endsection
-
-

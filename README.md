@@ -15,7 +15,9 @@ Polr is an intrepid, self-hostable open-source link shortening web application w
 
 ### Quickstart
 
-Polr is written in PHP and Lumen, using MySQL as its primary database.
+Polr is written in PHP and Laravel, using MySQL as its primary database.
+
+This fork runs on **Laravel 12** and **PHP 8.5** (Docker base image `dptsi/laravel-web-dev:8.5`).
 
  - To get started with Polr on your server, check out the [installation guide](http://docs.polrproject.org/en/latest/user-guide/installation/). You can clone this repository, or download a [release](https://github.com/cydrobolt/polr/releases).
  - To get started with the Polr API, check out the [API guide](http://docs.polrproject.org/en/latest/developer-guide/api/).
@@ -74,7 +76,11 @@ docker compose exec -T myits-url-shortener-web php bulk-generate-qrcode --short-
 docker compose exec -T myits-url-shortener-web php bulk-generate-qrcode --quiet       # Minimal output
 ```
 
-**Note:** The `php artisan qrcode:generate` command is disabled due to a PHP 7.3 compatibility issue. Use the standalone scripts above instead.
+The artisan command works again on PHP 8.5 (the old segfault was specific to Lumen 5.1 on PHP 7.3):
+
+```bash
+docker compose exec -T myits-url-shortener-web php artisan qrcode:generate --limit=50
+```
 
 #### Versioning
 

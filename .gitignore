@@ -7,3 +7,5 @@ env
 .env.example
 composer.phar
 .vscode
+.phpunit.result.cache
+.phpunit.cache

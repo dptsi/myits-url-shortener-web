@@ -2,6 +2,7 @@
 namespace App\Helpers;
 use App\Models\Link;
 use App\Helpers\BaseHelper;
+use Illuminate\Support\Str;
 
 class LinkHelper {
     static public function checkIfAlreadyShortened($long_link) {
@@ -103,7 +104,7 @@ class LinkHelper {
 
         while ($in_use) {
             // Generate a new string until the ending is not in use
-            $pr_str = str_random(env('_PSEUDO_RANDOM_KEY_LENGTH'));
+            $pr_str = Str::random((int) env('_PSEUDO_RANDOM_KEY_LENGTH'));
             
             if (session('role_group') == UserHelper::$ROLE_GROUP['mahasiswa']) {
                 $in_use = LinkHelper::linkExists('m/' . $pr_str);

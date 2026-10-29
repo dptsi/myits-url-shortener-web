@@ -1,95 +1,58 @@
 @extends('layouts.base')
 
-@section('css')
-<link rel='stylesheet' href='/css/admin.css'>
-<link rel='stylesheet' href='/css/datatables.min.css'>
-@endsection
+@section('page_title', 'Admin')
 
 @section('content')
 <div ng-controller="AdminCtrl" class="ng-root">
-    <div class="row">
-        <div class='col-md-12'>
-            <div class="tab-content">
-                <div role="tabpanel" class="tab-pane" id="home">
-                    <div class="page-header">
-                        <h1>Welcome {{ session('username') }}!</h1>
-                    </div>
-                </div>
+    @if ($role == $admin_role)
+    <ul class="nav nav-tabs mg-b-20 admin-nav" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active d-inline-flex align-items-center gap-1" data-toggle="tab" href="#admin-links" role="tab">
+                <span class="ms-rounded tx-18">link</span> Tautan
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link d-inline-flex align-items-center gap-1" data-toggle="tab" href="#admin-users" role="tab">
+                <span class="ms-rounded tx-18">group</span> Pengguna
+            </a>
+        </li>
+    </ul>
 
-                <!-- <div role="tabpanel" class="tab-pane" id="links">
-                    <h3>Links</h3>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane fade show active" id="admin-links">
+            <div class="card bd-0">
+                <div class="card-body">
                     @include('snippets.link_table', [
-                        'table_id' => 'user_links_table'
+                        'table_id' => 'admin_links_table'
                     ])
-                </div> -->
-
-
-                @if ($role == $admin_role)
-                <div role="tabpanel" class="tab-pane active" id="admin">
-                    <div class="admin-card">
-                        <h3><i class="fa fa-link" aria-hidden="true"></i>&nbsp; Links</h3>
-                        <div class="table-responsive">
-                            @include('snippets.link_table', [
-                                'table_id' => 'admin_links_table'
-                            ])
-                        </div>
-                    </div>
-
-                    <div class="admin-card">
-                        <h3><i class="fa fa-users" aria-hidden="true"></i>&nbsp; Users</h3>
-                        <div class="table-responsive">
-                            @include('snippets.user_table', [
-                                'table_id' => 'admin_users_table'
-                            ])
-                        </div>
-                    </div>
                 </div>
-                @endif
-
             </div>
         </div>
-    </div>
-
-    <!-- <div class="angular-modals">
-        <edit-long-link-modal ng-repeat="modal in modals.editLongLink" link-ending="modal.linkEnding"
-            old-long-link="modal.oldLongLink" clean-modals="cleanModals"></edit-long-link-modal>
-        <edit-user-api-info-modal ng-repeat="modal in modals.editUserApiInfo" user-id="modal.userId"
-            api-quota="modal.apiQuota" api-active="modal.apiActive" api-key="modal.apiKey"
-            generate-new-api-key="generateNewAPIKey" clean-modals="cleanModals"></edit-user-api-info>
-    </div> -->
-
-    <div id="editModal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Edit Link</h4>
-                </div>
-                <div class="modal-body">
-                    <form id="editLinkForm">
-                        <input type="hidden" id="edit_short_url">
-                        <div class="form-group">
-                            <label for="edit_long_url">Long URL</label>
-                            <input type="url" id="edit_long_url" class="form-control" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </form>
+        <div role="tabpanel" class="tab-pane fade" id="admin-users">
+            <div class="card bd-0">
+                <div class="card-body">
+                    @include('snippets.user_table', [
+                        'table_id' => 'admin_users_table'
+                    ])
                 </div>
             </div>
         </div>
     </div>
+    @else
+    <div class="card bd-0">
+        <div class="card-body">
+            <h5 class="tx-figtree tx-medium mg-b-0">Selamat datang, {{ session('username') }}!</h5>
+        </div>
+    </div>
+    @endif
 
+    @include('snippets.edit_link_modal')
 </div>
-
-
 @endsection
 
 @section('js')
-{{-- Include modal templates --}}
-@include('snippets.modals')
-
-{{-- Include extra JS --}}
-<script src='/js/datatables.min.js'></script>
+<script src='/mids/lib/datatables.net/js/jquery.dataTables.min.js'></script>
+<script src='/js/datatables-mids.js'></script>
 <script src='/js/api.js'></script>
 <script>
     polr.directive('editLongLinkModal', function() {
@@ -200,7 +163,7 @@
         $scope.syncHash = function() {
             var url = document.location.toString();
             if (url.match('#')) {
-                $('.admin-nav a[href=#' + url.split('#')[1] + ']').tab('show');
+                $('.admin-nav a[href="#' + url.split('#')[1] + '"]').tab('show');
             }
         };
 
@@ -331,7 +294,9 @@
                 $scope.datatables['admin_links_table'].ajax.reload(null, false);
             }
 
-            $scope.datatables['user_links_table'].ajax.reload(null, false);
+            if ('user_links_table' in $scope.datatables) {
+                $scope.datatables['user_links_table'].ajax.reload(null, false);
+            }
         };
 
         $scope.reloadUserTables = function() {
@@ -347,12 +312,12 @@
             apiCall('admin/toggle_user_active', {
                 'user_id': user_id,
             }, function(new_status) {
-                var text = (new_status == 1) ? 'Active' : 'Inactive';
+                var text = (new_status == 1) ? 'Aktif' : 'Nonaktif';
                 el.text(text);
-                if (el.hasClass('btn-success')) {
-                    el.removeClass('btn-success').addClass('btn-danger');
+                if (el.hasClass('btn-outline-success')) {
+                    el.removeClass('btn-outline-success').addClass('btn-outline-danger');
                 } else {
-                    el.removeClass('btn-danger').addClass('btn-success');
+                    el.removeClass('btn-outline-danger').addClass('btn-outline-success');
                 }
             });
         }
@@ -408,11 +373,11 @@
             }, function(next_action) {
                 toastr.success(curr_action + " was successful.", "Success");
                 if (next_action == 'Disable') {
-                    el.removeClass('btn-success');
-                    el.addClass('btn-danger');
+                    el.removeClass('btn-outline-success');
+                    el.addClass('btn-outline-danger');
                 } else {
-                    el.removeClass('btn-danger');
-                    el.addClass('btn-success');
+                    el.removeClass('btn-outline-danger');
+                    el.addClass('btn-outline-success');
                 }
 
                 el.text(next_action);
@@ -432,7 +397,13 @@
             $('.admin-nav a').click(function(e) {
                 e.preventDefault();
                 $(this).tab('show');
-                console.log(document.location.toString());
+            });
+
+            // Lebar kolom DataTables dihitung ulang saat tab berganti
+            $('.admin-nav a').on('shown.bs.tab', function() {
+                $.each($scope.datatables, function(id, table) {
+                    table.columns.adjust();
+                });
             });
             $scope.syncHash();
 
@@ -440,7 +411,7 @@
                 $scope.syncHash();
             });
 
-            $("a[href^=#]").on("click", function(e) {
+            $('.admin-nav a[href^="#"]').on("click", function(e) {
                 history.pushState({}, '', this.href);
             });
 
@@ -478,14 +449,14 @@
                 success: function(response) {
                     if (response === "OK") {
                         $('#editModal').modal('hide');
-                        location.reload();
-                        // $('#links-table').DataTable().ajax.reload(); // Reload DataTable
+                        toastr.success('Tautan berhasil diperbarui.', 'Berhasil');
+                        $scope.reloadLinkTables();
                     } else {
-                        alert('Error updating link.');
+                        toastr.error('Gagal memperbarui tautan.', 'Error');
                     }
                 },
                 error: function(xhr) {
-                    alert('Failed to update link: ' + xhr.responseText);
+                    toastr.error('Gagal memperbarui tautan: ' + xhr.responseText, 'Error');
                 }
             });
         });

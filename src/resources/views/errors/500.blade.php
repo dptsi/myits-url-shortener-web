@@ -1,7 +1,5 @@
 @extends('layouts.errors')
 
 @section('content')
-<h1>500</h1>
-<p>Oh dear. Something seems to have gone awry.</p>
-<h4>Please contact an administrator to report this issue.</h4>
+@include('snippets.error_card', ['icon' => 'error', 'color' => 'tx-danger', 'code' => '500', 'message' => 'Terjadi kesalahan pada server. Silakan hubungi administrator jika masalah berlanjut.'])
 @endsection

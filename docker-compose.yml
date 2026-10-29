@@ -5,7 +5,7 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        image: myits-url-shortener-web:7.3
+        image: myits-url-shortener-web:8.5
         volumes:
             - ./src:/var/www/html
         environment:

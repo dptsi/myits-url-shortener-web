@@ -10,7 +10,7 @@ use App\Helpers\LinkHelper;
 use App\Helpers\ClickHelper;
 use App\Helpers\UserHelper;
 use App\Jobs\GenerateQRCode;
-use Yajra\Datatables\Facades\Datatables;
+use Yajra\DataTables\Facades\DataTables as Datatables;
 
 class LinkController extends Controller {
     /**
@@ -34,7 +34,7 @@ class LinkController extends Controller {
             ->select(['id', 'short_url', 'long_url', 'base64', 'clicks', 'created_at']);
 
         return Datatables::of($links)
-            ->addColumn('qr_code', [$this, 'renderQrCode'])
+            ->addColumn('qr_code', $this->renderQrCode(...))
             ->addColumn('edit', function ($row) {
                 return '<button class=\"btn btn-sm btn-primary edit-link\" data-short=\"'.$row->short_url.'\" data-long=\"'.$row->long_url.'\">Edit</button>'
                     . '<button class=\"btn btn-sm btn-danger delete-link\" data-short_url=\"'.$row->short_url.'\">Delete</button>';

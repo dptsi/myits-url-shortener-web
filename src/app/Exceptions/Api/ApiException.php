@@ -2,6 +2,9 @@
 namespace App\Exceptions\Api;
 
 class ApiException extends \Exception {
+    public $response_type;
+    public $text_code;
+
     /**
      * Catch an API exception.
      *
@@ -13,7 +16,7 @@ class ApiException extends \Exception {
      *
      * @return mixed
      */
-    public function __construct($text_code='SERVER_ERROR', $message, $status_code = 0, $response_type='plain_text', Exception $previous = null) {
+    public function __construct($text_code, $message, $status_code = 0, $response_type='plain_text', ?\Exception $previous = null) {
         $this->response_type = $response_type;
         $this->text_code = $text_code;
         parent::__construct($message, $status_code, $previous);

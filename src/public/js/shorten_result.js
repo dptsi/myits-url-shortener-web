@@ -20,7 +20,7 @@ $('#generate-qr-code').click(function () {
 
     container.empty();
     $.LoadingOverlay("show");
-    var url = "https://shortener.its.ac.id/generate-qrbase64/" + encodeURIComponent(short_link);
+    var url = "/generate-qrbase64/" + encodeURIComponent(short_link);
     $.ajax({
         url: url,
         method: 'GET',
@@ -34,7 +34,9 @@ $('#generate-qr-code').click(function () {
             imgElement.src = 'data:image/png;base64,' + base64Image;
             imgElement.alt = "QR Code";
 
+            imgElement.className = 'wd-200 ht-200';
             container.append(imgElement);
+            container.append('<div class="mg-t-10"><a class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1" download="qr-' + short_link + '.png" href="' + imgElement.src + '"><span class="ms-rounded tx-18">download</span> Unduh QR</a></div>');
             container.find('img').attr('alt', original_link);
             container.show();
         },
@@ -57,9 +59,9 @@ clipboard.on('success', function (e) {
 });
 
 $('#clipboard-copy').on('blur', function () {
-    $(this).tooltip('destroy');
+    $(this).tooltip('dispose');
 }).on('mouseleave', function () {
-    $(this).tooltip('destroy');
+    $(this).tooltip('dispose');
 });
 
 $(function () {

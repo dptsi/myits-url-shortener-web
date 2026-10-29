@@ -1,15 +1,19 @@
 <?php
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
 class LinkControllerTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Test LinkController
      *
      * @return void
      */
     public function testRequestGetNotExistShortUrl() {
-        $response = $this->call('GET', '/notexist');
-        $this->assertTrue($response->isRedirection());
-        $this->assertRedirectedTo(env('SETTING_INDEX_REDIRECT'));
+        $this->get('/notexist')
+             ->assertOk()
+             ->assertViewIs('errors.404');
     }
 }

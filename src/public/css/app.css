@@ -1,0 +1,43 @@
+/* Penyesuaian kecil di atas myITS Design System */
+
+.page-title-bar {
+    left: 240px;
+    z-index: 2 !important;
+}
+
+/* Kolom tabel tautan */
+.dataTable td.col-long-url {
+    max-width: 280px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dataTable td.col-short-url,
+.dataTable td.col-actions {
+    white-space: nowrap;
+}
+
+.dataTable td.col-qr {
+    text-align: center;
+    width: 120px;
+}
+
+.dataTable td.col-qr img.qr-thumb {
+    border-radius: 8px;
+}
+
+/* SweetAlert mengikuti font template */
+.swal2-popup {
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Form buat tautan: tata letak mengikuti form lama */
+.long-link-input { margin-bottom: 25px; }
+.custom-url-group { width: auto; flex: 0 1 auto; flex-wrap: nowrap; }
+.custom-url-group .custom-url-field { flex: 0 1 220px; width: 220px; min-width: 0; }
+#shorten { min-width: 300px; }
+@media (max-width: 500px) {
+    .custom-url-group, .custom-url-group .custom-url-field { flex: 1 1 auto; width: 100%; }
+    #shorten, #check-link-availability { width: 100%; min-width: 0; }
+}

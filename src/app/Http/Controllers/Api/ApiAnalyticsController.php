@@ -9,7 +9,7 @@ use App\Exceptions\Api\ApiException;
 
 class ApiAnalyticsController extends ApiController {
     public function lookupLinkStats (Request $request, $stats_type=false) {
-        $user = $request->user;
+        $user = $request->attributes->get('api_user');
         $response_type = $request->input('response_type') ?: 'json';
 
         if ($user->anonymous) {

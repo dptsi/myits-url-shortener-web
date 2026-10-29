@@ -185,10 +185,6 @@ class GenerateQRCodes extends Command
                 imagealphablending($img, true);
                 imagesavealpha($img, true);
                 imagecopy($img, $logoBg, $dstX, $dstY, 0, 0, $resizedLogoW, $resizedLogoH);
-
-                imagedestroy($logoBg);
-                imagedestroy($logoImg);
-                imagedestroy($resizedLogo);
             }
         }
 
@@ -197,7 +193,6 @@ class GenerateQRCodes extends Command
         imagepng($img);
         $pngData = ob_get_clean();
         $qrCodeBase64 = base64_encode($pngData);
-        imagedestroy($img);
 
         // Step 5: Save to database
         DB::table('links')

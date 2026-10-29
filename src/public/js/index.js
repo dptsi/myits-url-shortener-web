@@ -1,7 +1,40 @@
 $(function() {
 
+    // Pendekkan hanya bisa diklik jika URL valid dan akhiran sudah dicek tersedia
+    var endingAvailable = false;
+
+    function isValidUrl(value) {
+        var url;
+        try {
+            url = new URL($.trim(value));
+        } catch (e) {
+            return false;
+        }
+        return (url.protocol === 'http:' || url.protocol === 'https:')
+            && /^[^.]+(\.[^.]+)+$/.test(url.hostname);
+    }
+
+    function updateShortenButton() {
+        $('#shorten').prop('disabled', !(endingAvailable && isValidUrl($('#link-url').val())));
+    }
+
+    $('#link-url').on('input', function() {
+        var value = $(this).val();
+        $(this).toggleClass('is-invalid', value !== '' && !isValidUrl(value));
+        updateShortenButton();
+    });
+
+    // Akhiran yang diubah harus dicek ulang sebelum bisa dipendekkan
+    $('.custom-url-field').on('input', function() {
+        endingAvailable = false;
+        updateShortenButton();
+        $('#link-availability-status').empty();
+    });
+
     $('#check-link-availability').click(function() {
         var custom_link = $('.custom-url-field').val();
+        endingAvailable = false;
+        updateShortenButton();
         var request = $.ajax({
             url: "/api/v2/link_avail_check",
             type: "POST",
@@ -10,21 +43,23 @@ $(function() {
             },
             dataType: "html"
         });
-        $('#link-availability-status').html('<span><i class="fa fa-spinner"></i> Loading</span>');
+        $('#link-availability-status').html('<span class="tx-color-03 d-inline-flex align-items-center gap-1"><span class="ms-rounded tx-16">progress_activity</span> Memeriksa...</span>');
         request.done(function(msg) {
             if (msg == 'unavailable') {
-                $('#link-availability-status').html(' <span style="color:red"><i class="fa fa-ban"></i> Already in use</span>');
+                $('#link-availability-status').html('<span class="tx-danger d-inline-flex align-items-center gap-1"><span class="ms-rounded tx-16">block</span> Akhiran sudah dipakai</span>');
             } else if (msg == 'available') {
-                $('#link-availability-status').html('<span style="color:green"><i class="fa fa-check"></i> Available</span>');
+                $('#link-availability-status').html('<span class="tx-success d-inline-flex align-items-center gap-1"><span class="ms-rounded tx-16">check_circle</span> Akhiran tersedia</span>');
+                endingAvailable = true;
+                updateShortenButton();
             } else if (msg == 'invalid') {
-                $('#link-availability-status').html('<span style="color:orange"><i class="fa fa-exclamation-triangle"></i> Invalid Custom URL Ending</span>');
+                $('#link-availability-status').html('<span class="tx-warning d-inline-flex align-items-center gap-1"><span class="ms-rounded tx-16">warning</span> Akhiran tidak valid (gunakan huruf, angka, - atau _)</span>');
             } else {
-                $('#link-availability-status').html(' <span style="color:red"><i class="fa fa-exclamation-circle"></i> An error occured. Try again</span>' + msg);
+                $('#link-availability-status').html('<span class="tx-danger d-inline-flex align-items-center gap-1"><span class="ms-rounded tx-16">error</span> Terjadi kesalahan, coba lagi</span>');
             }
         });
 
         request.fail(function(jqXHR, textStatus) {
-            $('#link-availability-status').html(' <span style="color:red"><i class="fa fa-exclamation-circle"></i> An error occured. Try again</span>' + textstatus);
+            $('#link-availability-status').html('<span class="tx-danger d-inline-flex align-items-center gap-1"><span class="ms-rounded tx-16">error</span> Terjadi kesalahan, coba lagi</span>');
         });
     });
     min = 1;
@@ -64,16 +99,16 @@ $(function() {
     $('.btn-toggle').click(function() {
         $(this).find('.btn').toggleClass('active');
 
-        if ($(this).find('.btn-primary').size() > 0) {
+        if ($(this).find('.btn-primary').length > 0) {
             $(this).find('.btn').toggleClass('btn-primary');
         }
-        if ($(this).find('.btn-danger').size() > 0) {
+        if ($(this).find('.btn-danger').length > 0) {
             $(this).find('.btn').toggleClass('btn-danger');
         }
-        if ($(this).find('.btn-success').size() > 0) {
+        if ($(this).find('.btn-success').length > 0) {
             $(this).find('.btn').toggleClass('btn-success');
         }
-        if ($(this).find('.btn-info').size() > 0) {
+        if ($(this).find('.btn-info').length > 0) {
             $(this).find('.btn').toggleClass('btn-info');
         }
 

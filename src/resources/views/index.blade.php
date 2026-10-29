@@ -1,47 +1,45 @@
 @extends('layouts.base')
 
-@section('css')
-    <link rel='stylesheet' href='css/index.css' />
-@endsection
+@section('page_title', 'Buat Tautan')
 
 @section('content')
-    <h3 class='title'><strong>Type your URL here</strong></h3>
+    <div class="card bd-0">
+        <div class="card-body pd-lg-30">
+            <h4 class="tx-figtree tx-bold mg-b-15">Masukkan URL Anda di sini</h4>
 
-    <form id='shorten-form' method='POST' action='/shorten' role='form'>
-        <input type='url' autocomplete='off' class='form-control long-link-input' placeholder='https://' name='link-url' />
-        <p>Customize link</p>
-        <div class="form-inline">
-            <div class="form-group">
-                <div class="input-group">
-                    <div class="input-group-addon">
-                        <strong>{{ env('APP_ADDRESS') }}/@if (session('role_group') == 'Mahasiswa')
-                                m/
-                            @endif
-                        </strong>
-                    </div>
-                    <input type='text' placeholder="your custom URL" autocomplete="off"
-                        class='form-control custom-url-field' name='custom-ending' />
+            <form id='shorten-form' method='POST' action='/shorten' role='form'>
+                <div class="long-link-input">
+                    <input type='url' id="link-url" autocomplete='off' class='form-control form-control-lg' placeholder='https://' name='link-url' />
+                    <div class="invalid-feedback">URL tidak valid. Gunakan alamat lengkap, contoh: https://www.its.ac.id</div>
                 </div>
-            </div>
-            <a href='#' class='btn btn-success check-btn' id='check-link-availability'>Check Availability</a>
-        </div>
-        <div>
-            <div id='link-availability-status'></div>
-        </div>
 
-        <button type='button' class='btn btn-primary' id='shorten'>Shorten</button>
-        <input type="hidden" name='_token' value='{{ csrf_token() }}' />
-    </form>
+                <p class="mg-b-10">Kustomisasi tautan</p>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <div class="input-group custom-url-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text tx-bold">{{ env('APP_ADDRESS') }}/@if (session('role_group') == 'Mahasiswa')m/@endif</span>
+                        </div>
+                        <input type='text' id="custom-ending" placeholder="akhiran tautan Anda" autocomplete="off"
+                            class='form-control custom-url-field' name='custom-ending' />
+                    </div>
+                    <button type="button" class='btn btn-success tx-bold' id='check-link-availability'>Cek Ketersediaan</button>
+                </div>
+                <div id='link-availability-status' class="tx-13 mg-t-10 mg-b-20" style="min-height: 20px;"></div>
 
+                <button type='button' class='btn btn-primary tx-bold' id='shorten'>Pendekkan</button>
+                <input type="hidden" name='_token' value='{{ csrf_token() }}' />
+            </form>
+        </div>
+    </div>
+@endsection
+
+@section('js')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/swal-mids.js"></script>
+    <script src='/js/index.js'></script>
     <script>
+        // Tombol Pendekkan diaktifkan oleh index.js hanya jika akhiran tersedia
         document.getElementById('shorten').disabled = true;
-
-        document.getElementById('check-link-availability').addEventListener('click', function() {
-            setTimeout(function() {
-                document.getElementById('shorten').disabled = false;
-            }, 1000); // Simulate async check with 1 second delay
-        });
         document.getElementById('shorten').addEventListener('click', function() {
             Swal.fire({
                 width: window.innerWidth <= 768 ? '100%' : '50%',
@@ -68,17 +66,9 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var form = document.getElementById('shorten-form');
-                    var formData = new FormData(form);
-                    form.submit();
+                    document.getElementById('shorten-form').submit();
                 }
             });
         });
     </script>
-
-
-@endsection
-
-@section('js')
-    <script src='js/index.js'></script>
 @endsection

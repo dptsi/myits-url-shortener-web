@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Yajra\Datatables\Facades\Datatables;
+use Yajra\DataTables\Facades\DataTables as Datatables;
 
 use App\Models\Link;
 use App\Models\User;
@@ -11,6 +11,7 @@ use App\Helpers\UserHelper;
 use Illuminate\Support\Facades\DB;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Str;
 
 class AdminPaginationController extends Controller
 {
@@ -24,7 +25,7 @@ class AdminPaginationController extends Controller
 
     public function renderLongUrlCell($link)
     {
-        return '<a target="_blank" title="' . e($link->long_url) . '" href="' . $link->long_url . '">' . str_limit($link->long_url, 50) . '</a>
+        return '<a target="_blank" title="' . e($link->long_url) . '" href="' . $link->long_url . '">' . Str::limit($link->long_url, 50) . '</a>
             <a class="btn btn-primary btn-xs edit-long-link-btn" ng-click="editLongLink(\'' . $link->short_url . '\', \'' . $link->long_url . '\')"><i class="fa fa-edit edit-link-icon"></i></a>';
     }
 
@@ -80,11 +81,11 @@ class AdminPaginationController extends Controller
         }
 
         if ($user->active) {
-            $active_text = 'Active';
-            $btn_color_class = ' btn-success';
+            $active_text = 'Aktif';
+            $btn_color_class = ' btn-outline-success';
         } else {
-            $active_text = 'Inactive';
-            $btn_color_class = ' btn-danger';
+            $active_text = 'Nonaktif';
+            $btn_color_class = ' btn-outline-danger';
         }
 
         return '<a class="btn btn-sm status-display' . $btn_color_class . $btn_class . '" ng-click="toggleUserActiveStatus($event, ' . $user->id . ')">' . $active_text . '</a>';
@@ -125,11 +126,11 @@ class AdminPaginationController extends Controller
     public function renderToggleLinkActiveCell($link)
     {
         // Add "Disable/Enable" action buttons
-        $btn_class = 'btn-danger';
+        $btn_class = 'btn-outline-danger';
         $btn_text = 'Disable';
 
         if ($link->is_disabled) {
-            $btn_class = 'btn-success';
+            $btn_class = 'btn-outline-success';
             $btn_text = 'Enable';
         }
 
@@ -156,10 +157,10 @@ class AdminPaginationController extends Controller
 
         $admin_users = User::select(['username', 'email', 'created_at', 'active', 'api_key', 'api_active', 'api_quota', 'role', 'id']);
         return Datatables::of($admin_users)
-            ->addColumn('toggle_active', [$this, 'renderToggleUserActiveCell'])
-            ->addColumn('change_role', [$this, 'renderChangeUserRoleCell'])
-            ->addColumn('delete', [$this, 'renderDeleteUserCell'])
-            ->editColumn('created_at', [$this, 'formatDateTime'])
+            ->addColumn('toggle_active', $this->renderToggleUserActiveCell(...))
+            ->addColumn('change_role', $this->renderChangeUserRoleCell(...))
+            ->addColumn('delete', $this->renderDeleteUserCell(...))
+            ->editColumn('created_at', $this->formatDateTime(...))
             ->escapeColumns(['username', 'email'])
             ->make(true);
     }
@@ -185,15 +186,15 @@ class AdminPaginationController extends Controller
                 'links.is_disabled'
             ]);
         return Datatables::of($admin_links)
-            // ->addColumn('delete', [$this, 'renderDeleteLinkCell'])
+            // ->addColumn('delete', $this->renderDeleteLinkCell(...))
             ->addColumn('action', function ($row) {
                 $disableBtn = (new self)->renderToggleLinkActiveCell($row);
-                $editBtn = '<button class="btn btn-sm btn-primary edit-link" data-short="'.e($row->short_url).'" data-long="'.e($row->long_url).'">Edit</button>';
-                return $editBtn . '&nbsp;' . $disableBtn;
+                $editBtn = '<button class="btn btn-sm btn-outline-primary edit-link d-inline-flex align-items-center gap-1" data-short="'.e($row->short_url).'" data-long="'.e($row->long_url).'"><span class="ms-rounded tx-16">edit</span> Ubah</button>';
+                return '<div class="d-flex gap-1">' . $editBtn . $disableBtn . '</div>';
             })
-            ->editColumn('clicks', [$this, 'renderClicksCell'])
-            ->editColumn('created_at', [$this, 'formatDateTime'])
-            ->addColumn('qr_code', [$this, 'renderQrCode'])
+            ->editColumn('clicks', $this->renderClicksCell(...))
+            ->editColumn('created_at', $this->formatDateTime(...))
+            ->addColumn('qr_code', $this->renderQrCode(...))
             ->escapeColumns(['short_url'])
             ->make(true);
     }
@@ -207,12 +208,13 @@ class AdminPaginationController extends Controller
             ->select(['id', 'short_url', 'long_url', 'base64', 'clicks', 'created_at']);
 
         return Datatables::of($user_links)
-            ->editColumn('created_at', [$this, 'formatDateTime'])
-            ->addColumn('qr_code', [$this, 'renderQrCode'])
+            ->editColumn('created_at', $this->formatDateTime(...))
+            ->addColumn('qr_code', $this->renderQrCode(...))
             ->addColumn('edit', function ($row) {
-                return '<button class="btn btn-sm btn-primary edit-link" data-short="'.$row->short_url.'" data-long="'.$row->long_url.'">Edit</button>
-                <button class="btn btn-sm btn-danger delete-link" data-short_url="'.$row->short_url.'">Delete</button>
-                ';
+                return '<div class="d-flex gap-1">'
+                    . '<button class="btn btn-sm btn-outline-primary edit-link d-inline-flex align-items-center gap-1" data-short="'.e($row->short_url).'" data-long="'.e($row->long_url).'"><span class="ms-rounded tx-16">edit</span> Ubah</button>'
+                    . '<button class="btn btn-sm btn-outline-danger delete-link d-inline-flex align-items-center gap-1" data-short_url="'.e($row->short_url).'"><span class="ms-rounded tx-16">delete</span> Hapus</button>'
+                    . '</div>';
             })
             ->escapeColumns(['short_url'])
             ->make(true);
@@ -236,22 +238,23 @@ class AdminPaginationController extends Controller
         $qrDataUri = 'data:image/png;base64,' . $link->base64;
         // Thumbnail kecil -- klik buka modal HD
         $qrCode = '<img src="' . $qrDataUri . '" alt="QR Code" class="qr-thumb" '
-                . 'style="width:100px;height:100px;cursor:pointer" '
+                . 'style="width:72px;height:72px;cursor:pointer" '
                 . 'data-toggle="modal" data-target="#' . $modalId . '">';
-        $downloadLink = '<a href="' . $qrDataUri . '" download="qr_code_hd.png" class="qr-download">Download</a>';
+        $downloadLink = '<a href="' . $qrDataUri . '" download="qr_code_hd.png" class="qr-download tx-13">Unduh</a>';
 
         // Modal untuk tampilan HD
-        $modal = '<div id="' . $modalId . '" class="modal fade" tabindex="-1" role="dialog">'
+        $modal = '<div id="' . $modalId . '" class="modal fade effect-scale" tabindex="-1" role="dialog">'
                . '<div class="modal-dialog modal-sm" role="document">'
-               . '<div class="modal-content">'
-               . '<div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>'
-               . '<h5 class="modal-title">QR Code HD — ' . e($shortUrl) . '</h5></div>'
+               . '<div class="modal-content bd-0">'
+               . '<div class="modal-header bd-0 d-flex align-items-center pd-b-0">'
+               . '<h5 class="modal-title">QR Code — ' . e($shortUrl) . '</h5>'
+               . '<button type="button" class="btn btn-icon btn-sm rounded-circle d-flex align-items-center bd-0" data-dismiss="modal"><span class="ms-rounded tx-22" aria-label="close">close</span></button></div>'
                . '<div class="modal-body text-center">'
                . '<img src="' . $qrDataUri . '" alt="QR Code HD" style="max-width:100%">'
                . '</div>'
                . '<div class="modal-footer">'
-               . '<a href="' . $qrDataUri . '" download="qr_code_hd.png" class="btn btn-primary">Download HD</a>'
-               . '<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'
+               . '<button type="button" class="btn" data-dismiss="modal">Tutup</button>'
+               . '<a href="' . $qrDataUri . '" download="qr_code_hd.png" class="btn btn-primary">Unduh HD</a>'
                . '</div>'
                . '</div></div></div>';
 
@@ -259,12 +262,12 @@ class AdminPaginationController extends Controller
     }
 
     // URL untuk QR Code biasa
-    $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=https://its.id/' . $link->short_url . '&size=100x100';
+    $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=https://its.id/' . $link->short_url . '&size=72x72';
     // URL untuk QR Code HD
     $qrUrlHd = 'https://api.qrserver.com/v1/create-qr-code/?data=https://its.id/' . $link->short_url . '&size=500x500';
 
     // Menampilkan QR Code dan link download HD
-    return '<img src="' . $qrUrl . '" alt="" title="" /><br><a href="' . $qrUrlHd . '" download="qr_code_hd.png">Download</a>';
+    return '<img src="' . $qrUrl . '" alt="" title="" /><br><a href="' . $qrUrlHd . '" download="qr_code_hd.png" class="tx-13">Unduh</a>';
 }
 
 }

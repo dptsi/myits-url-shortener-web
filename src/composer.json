@@ -1,31 +1,30 @@
 {
     "name": "cydrobolt/polr",
     "description": "The Polr URL Shortener.",
-    "keywords": ["url-shortener", "url", "cms"],
+    "keywords": [
+        "url-shortener",
+        "url",
+        "cms"
+    ],
     "license": "GPLv2+",
     "type": "project",
     "require": {
-        "php": ">=5.5.9",
-        "laravel/lumen-framework": "5.1.*",
-        "vlucas/phpdotenv": "~1.0",
-        "illuminate/mail": "~5.1",
-        "yajra/laravel-datatables-oracle": "~6.0",
-        "paragonie/random_compat": "^1.0.6",
-        "torann/geoip": "^1.0",
-        "geoip2/geoip2": "^2.4",
-        "nesbot/carbon": "^1.22",
-        "doctrine/dbal": "^2.5",
-        "google/recaptcha": "~1.1",
-        "myits/openid-connect-client": "*",
-        "illuminate/redis": "*",
-        "illuminate/queue": "^5.1",
-        "simplesoftwareio/simple-qrcode": "~4",
+        "php": "^8.2",
+        "ext-gd": "*",
+        "laravel/framework": "^12.0",
+        "yajra/laravel-datatables-oracle": "^12.0",
+        "torann/geoip": "^3.0",
+        "geoip2/geoip2": "^3.0",
+        "google/recaptcha": "^1.3",
+        "myits/openid-connect-client": "^1.4",
+        "predis/predis": "^2.0",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "google/cloud-storage": "^1.30"
     },
     "require-dev": {
-        "fzaninotto/faker": "~1.0",
-        "phpunit/phpunit": "^5.2",
-        "symfony/css-selector": "^3.0"
+        "fakerphp/faker": "^1.23",
+        "mockery/mockery": "^1.6",
+        "phpunit/phpunit": "^11.5"
     },
     "autoload": {
         "psr-4": {
@@ -40,10 +39,35 @@
             "tests/"
         ]
     },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ]
+    },
     "config": {
+        "optimize-autoloader": true,
         "preferred-install": "dist",
+        "sort-packages": true,
         "allow-plugins": {
-            "kylekatarnls/update-helper": true
+            "php-http/discovery": true
+        },
+        "policy": {
+            "advisories": {
+                "ignore-id": [
+                    "PKSA-12sz-bcny-pk4m",
+                    "PKSA-432p-hv1d-chf7",
+                    "PKSA-smrh-yx37-92ws",
+                    "PKSA-zh4j-by9m-7mz8",
+                    "PKSA-km2b-zc3b-mjm3",
+                    "PKSA-4p7m-np8m-fq35",
+                    "PKSA-t5xz-td8w-f35v",
+                    "PKSA-jsh4-f6tg-bwyq",
+                    "PKSA-mnsd-qtjt-pgcq"
+                ]
+            }
         }
-    }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }

@@ -59,7 +59,7 @@ class ApiMiddleware
     public function handle($request, Closure $next)
     {
         if (!$request->session()->has('username')){
-            $request->user = $this->getApiUserInfo($request);
+            $request->attributes->set('api_user', $this->getApiUserInfo($request));
         }
         return $next($request);
     }
