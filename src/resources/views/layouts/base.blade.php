@@ -23,8 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     $avatar_default = '/mids/assets/img/profile-default.png';
     $avatar = session('picture') ?: $avatar_default;
     $menu = [
-        ['url' => route('index'), 'active' => request()->is('/') || request()->is('shorten*'), 'icon' => 'add_link', 'label' => 'Buat Tautan'],
-        ['url' => url('links'), 'active' => request()->is('links*'), 'icon' => 'link', 'label' => 'Tautan Saya'],
+        ['url' => route('index'), 'active' => request()->is('/') || request()->is('shorten*'), 'icon' => 'add', 'label' => 'Buat Tautan'],
+        ['url' => url('links'), 'active' => request()->is('links*'), 'icon' => 'history', 'label' => 'Tautan Saya'],
     ];
     if ($is_admin) {
         $menu[] = ['url' => route('admin'), 'active' => request()->is('admin*'), 'icon' => 'admin_panel_settings', 'label' => 'Admin'];

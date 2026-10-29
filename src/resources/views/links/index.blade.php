@@ -34,8 +34,17 @@
 <script src="/js/swal-mids.js"></script>
 <script src='/mids/lib/datatables.net/js/jquery.dataTables.min.js'></script>
 <script src='/js/datatables-mids.js'></script>
+<script src='/js/clipboard.min.js'></script>
 
 <script>
+@php
+    $shortBase = rtrim(env('APP_PROTOCOL') . env('APP_ADDRESS'), '/');
+    if (!preg_match('#^https?://#', $shortBase)) {
+        $shortBase = 'https://' . $shortBase;
+    }
+@endphp
+var SHORT_BASE = @json($shortBase);
+
 $(document).ready(function() {
     var table = $('#links_table').DataTable({
         processing: true,
@@ -58,11 +67,30 @@ $(document).ready(function() {
                   return '<span title="' + escaped + '">' + escaped + '</span>';
               }
             },
-            { data: 'short_url',  name: 'short_url',  className: 'col-short-url' },
+            { data: 'short_url',  name: 'short_url',  className: 'col-short-url',
+              render: function(data, type) {
+                  if (type !== 'display') return data;
+                  // Tautan bisa diklik, label tanpa protokol: its.id/akhiran
+                  var href  = $('<div>').text(SHORT_BASE + '/' + data).html();
+                  var label = $('<div>').text(SHORT_BASE.replace(/^https?:\/\//, '') + '/' + data).html();
+                  return '<div class="d-inline-flex align-items-center gap-1">'
+                       + '<a href="' + href + '" target="_blank" rel="noopener" class="tx-medium">' + label + '</a>'
+                       + '<button type="button" class="btn btn-icon btn-sm bd-0 d-inline-flex align-items-center copy-short-url" data-clipboard-text="' + href + '" title="Salin tautan">'
+                       + '<span class="ms-rounded tx-18">content_copy</span></button>'
+                       + '</div>';
+              }
+            },
             { data: 'created_at', name: 'created_at',  searchable: false },
             { data: 'qr_code',    name: 'qr_code',    className: 'col-qr',      orderable: false, searchable: false },
             { data: 'edit',       name: 'edit',       className: 'col-actions', orderable: false, searchable: false }
         ]
+    });
+
+    // Tombol salin di kolom tautan pendek
+    var clipboard = new Clipboard('.copy-short-url');
+    clipboard.on('success', function(e) {
+        e.clearSelection();
+        toastr.success('Tautan disalin.', 'Berhasil');
     });
 
     // Klik tombol edit

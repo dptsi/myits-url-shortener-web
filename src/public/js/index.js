@@ -3,10 +3,19 @@ $(function() {
     // Pendekkan hanya bisa diklik jika URL valid dan akhiran sudah dicek tersedia
     var endingAvailable = false;
 
+    // User boleh mengetik tanpa protokol; https:// ditambahkan otomatis
+    function normalizeUrl(value) {
+        value = $.trim(value);
+        if (value !== '' && !/^[a-z][a-z0-9+.-]*:\/\//i.test(value)) {
+            value = 'https://' + value.replace(/^\/+/, '');
+        }
+        return value;
+    }
+
     function isValidUrl(value) {
         var url;
         try {
-            url = new URL($.trim(value));
+            url = new URL(normalizeUrl(value));
         } catch (e) {
             return false;
         }
@@ -24,11 +33,57 @@ $(function() {
         updateShortenButton();
     });
 
+    $('#link-url').on('blur', function() {
+        if (isValidUrl($(this).val())) {
+            $(this).val(normalizeUrl($(this).val()));
+        }
+    });
+
     // Akhiran yang diubah harus dicek ulang sebelum bisa dipendekkan
     $('.custom-url-field').on('input', function() {
         endingAvailable = false;
         updateShortenButton();
         $('#link-availability-status').empty();
+    });
+
+    // Hasil pemendekan ditampilkan di bawah form tanpa pindah halaman
+    window.submitShorten = function() {
+        var $button = $('#shorten');
+        $button.prop('disabled', true);
+        $('#link-url').val(normalizeUrl($('#link-url').val()));
+        $.ajax({
+            url: $('#shorten-form').attr('action'),
+            type: 'POST',
+            data: $('#shorten-form').serialize(),
+            dataType: 'json'
+        }).done(function(res) {
+            original_link = res.short_url;
+            $('#short_url').val(res.short_url);
+            $('.qr-code-container').empty().hide();
+            $('#shorten-result').show();
+            $('#shorten-result')[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            select_text();
+            // Akhiran sudah terpakai oleh tautan ini, jadi harus dicek ulang
+            endingAvailable = false;
+            $('#link-availability-status').empty();
+        }).fail(function(jqXHR) {
+            var res = jqXHR.responseJSON || {};
+            var message = res.message || 'Terjadi kesalahan, coba lagi';
+            if (res.errors) {
+                message = Object.values(res.errors)[0][0];
+            }
+            toastr['error'](message, 'Error');
+        }).always(updateShortenButton);
+    };
+
+    $('#shorten-another').click(function() {
+        $('#shorten-form')[0].reset();
+        $('#link-url').removeClass('is-invalid');
+        $('#link-availability-status').empty();
+        endingAvailable = false;
+        updateShortenButton();
+        $('#shorten-result').hide();
+        $('#link-url').focus();
     });
 
     $('#check-link-availability').click(function() {

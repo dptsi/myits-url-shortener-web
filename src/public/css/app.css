@@ -31,6 +31,8 @@
 .swal2-popup {
     font-family: 'Roboto', sans-serif;
 }
+.swal-warning-body { text-align: justify; font-size: 15px; font-weight: 400; line-height: 1.6; }
+.swal-warning-body b, .swal-warning-body strong { font-weight: 600; }
 
 /* Form buat tautan: tata letak mengikuti form lama */
 .long-link-input { margin-bottom: 25px; }

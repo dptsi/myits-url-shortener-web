@@ -5,14 +5,14 @@
 @section('content')
     <div class="card bd-0">
         <div class="card-body">
-            <h5 class="tx-figtree tx-bold mg-b-15">Masukkan URL Anda di sini</h5>
+            <h5 class="tx-figtree tx-medium mg-b-15">Masukkan URL Anda di sini</h5>
 
             <form id='shorten-form' method='POST' action='/shorten' role='form'>
                 <div class="long-link-input">
-                    <input type='url' id="link-url" autocomplete='off' class='form-control form-control-lg' placeholder='https://' name='link-url' />
-                    <div class="invalid-feedback">URL tidak valid. Gunakan alamat lengkap, contoh: https://www.its.ac.id</div>
+                    <input type='text' inputmode='url' id="link-url" autocomplete='off' class='form-control form-control-lg' placeholder='contoh: www.its.ac.id/berita' name='link-url' />
+                    <div class="invalid-feedback">URL tidak valid. Contoh: www.its.ac.id</div>
                 </div>
-                <h5 class="tx-figtree tx-bold mg-b-15">Kustomisasi tautan</h5>
+                <h5 class="tx-figtree tx-medium mg-b-15">Kustomisasi tautan</h5>
                 <div class="d-flex flex-wrap align-items-center gap-2">
                     <div class="input-group custom-url-group">
                         <div class="input-group-prepend">
@@ -21,13 +21,47 @@
                         <input type='text' id="custom-ending" placeholder="akhiran tautan Anda" autocomplete="off"
                             class='form-control custom-url-field' name='custom-ending' />
                     </div>
-                    <button type="button" class='btn btn btn-subtle-primary tx-bold' id='check-link-availability'>Cek Ketersediaan</button>
+                    <button type="button" class='btn btn btn-subtle-primary tx-medium' id='check-link-availability'>Cek Ketersediaan</button>
                 </div>
                 <div id='link-availability-status' class="tx-13 mg-t-10 mg-b-20" style="min-height: 20px;"></div>
 
-                <button type='button' class='btn btn-primary tx-bold' id='shorten'>Pendekkan</button>
+                <button type='button' class='btn btn-primary tx-medium' id='shorten'>Pendekkan</button>
                 <input type="hidden" name='_token' value='{{ csrf_token() }}' />
             </form>
+        </div>
+    </div>
+
+    <div class="card bd-0 mg-t-20" id="shorten-result" style="display: none;">
+        <div class="card-body">
+            <div class="d-flex align-items-center gap-2 mg-b-20">
+                <span class="ms-rounded ms-fill tx-success tx-24">check_circle</span>
+                <h5 class="tx-figtree tx-medium mg-b-0">Tautan pendek Anda siap dipakai</h5>
+            </div>
+
+            <label for="short_url" class="tx-medium">Tautan pendek</label>
+            <div class="input-group mg-b-20">
+                <input type='text' class='result-box form-control tx-medium' value='' id='short_url' readonly />
+                <div class="input-group-append">
+                    <button type="button" class='btn btn-outline-primary d-inline-flex align-items-center gap-1' id='clipboard-copy' data-clipboard-target='#short_url' data-toggle='tooltip' data-placement='bottom' data-trigger='manual' title='Tautan disalin!'>
+                        <span class="ms-rounded tx-18">content_copy</span> Salin
+                    </button>
+                </div>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+                <button type="button" id="generate-qr-code" class='btn btn-primary d-inline-flex align-items-center gap-1'>
+                    <span class="ms-rounded tx-18">qr_code_2</span> Tampilkan QR Code
+                </button>
+                <button type="button" id="shorten-another" class='btn d-inline-flex align-items-center gap-1'>
+                    <span class="ms-rounded tx-18">add</span> Buat tautan lain
+                </button>
+                <a href='{{ url('links') }}' class='btn d-inline-flex align-items-center gap-1'>
+                    <span class="ms-rounded tx-18">history</span> Tautan saya
+                </a>
+            </div>
+
+            <div class="qr-code-container tx-center mg-t-25" style="display: none;">
+            </div>
         </div>
     </div>
 @endsection
@@ -35,7 +69,11 @@
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/js/swal-mids.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-loading-overlay/2.1.7/loadingoverlay.min.js"></script>
+    <script src='/js/qrcode.min.js'></script>
+    <script src='/js/clipboard.min.js'></script>
     <script src='/js/index.js'></script>
+    <script src='/js/shorten_result.js'></script>
     <script>
         // Tombol Pendekkan diaktifkan oleh index.js hanya jika akhiran tersedia
         document.getElementById('shorten').disabled = true;
@@ -44,9 +82,10 @@
                 width: window.innerWidth <= 768 ? '100%' : '50%',
                 title: 'Peringatan',
                 html: `
-            <h5 style="text-align: justify;"><strong>Catatan Penting:</strong> pemendek tautan ini dilarang digunakan untuk mengarahkan ke konten yang melanggar hukum atau
-                tidak sesuai dengan norma dan etika, termasuk namun tidak terbatas pada:</h5>
-            <ul style="text-align: justify;">
+            <div class="swal-warning-body tx-figtree">
+            <p><strong>Catatan Penting:</strong> pemendek tautan ini dilarang digunakan untuk mengarahkan ke konten yang melanggar hukum atau
+                tidak sesuai dengan norma dan etika, termasuk namun tidak terbatas pada:</p>
+            <ul>
                 <li><b>Konten negatif</b> yang memicu kebencian, diskriminasi, atau provokasi.</li>
                 <li><b>Konten pornografi</b> atau materi tidak senonoh.</li>
                 <li><b>Konten yang melanggar hak cipta</b> seperti situs atau materi pembajakan.</li>
@@ -55,17 +94,18 @@
                 <li><b>Konten kekerasan</b> atau yang mengandung gambar, video, atau tulisan yang tidak pantas dan menyinggung.</li>
                 <li><b>Konten berbahaya</b> seperti virus, malware, atau software berbahaya lainnya.</li>
             </ul>
-            <hr style="text-align: justify;">
-            <h5 style="text-align: justify;">Penggunaan layanan ini untuk tujuan-tujuan tersebut akan mengakibatkan pemblokiran link dan pengguna yang
+            <hr>
+            <p>Penggunaan layanan ini untuk tujuan-tujuan tersebut akan mengakibatkan pemblokiran link dan pengguna yang
                 terkait. <b>Pelanggaran serius akan dilaporkan kepada pihak yang berwajib</b> sesuai dengan peraturan
-                perundang-undangan yang berlaku.</h5>`,
+                perundang-undangan yang berlaku.</p>
+            </div>`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Ya, saya setuju',
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('shorten-form').submit();
+                    submitShorten();
                 }
             });
         });

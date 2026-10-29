@@ -25,10 +25,10 @@
                 <span class="ms-rounded tx-18">qr_code_2</span> Tampilkan QR Code
             </button>
             <a href='{{route('index')}}' class='btn btn-outline-secondary d-inline-flex align-items-center gap-1'>
-                <span class="ms-rounded tx-18">add_link</span> Buat tautan lain
+                <span class="ms-rounded tx-18">add</span> Buat tautan lain
             </a>
             <a href='{{ url('links') }}' class='btn btn-outline-secondary d-inline-flex align-items-center gap-1'>
-                <span class="ms-rounded tx-18">link</span> Tautan saya
+                <span class="ms-rounded tx-18">history</span> Tautan saya
             </a>
         </div>
 

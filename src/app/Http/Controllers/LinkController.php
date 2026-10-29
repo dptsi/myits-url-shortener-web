@@ -80,6 +80,9 @@ class LinkController extends Controller {
 
     public function performShorten(Request $request) {
         if (env('SETTING_SHORTEN_PERMISSION') && !self::isLoggedIn()) {
+            if ($request->ajax()) {
+                return response()->json(['message' => 'You must be logged in to shorten links.'], 403);
+            }
             return redirect(route('index'))->with('error', 'You must be logged in to shorten links.');
         }
 
@@ -103,7 +106,15 @@ class LinkController extends Controller {
             (new GenerateQRCode($custom_ending))->handle();
         }
         catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json(['message' => $e->getMessage()], 422);
+            }
             return self::renderError($e->getMessage());
+        }
+
+        // Form di halaman Buat Tautan mengirim via AJAX dan menampilkan hasil di bawahnya
+        if ($request->ajax()) {
+            return response()->json(['short_url' => $short_url]);
         }
 
         return view('shorten_result', ['short_url' => $short_url]);

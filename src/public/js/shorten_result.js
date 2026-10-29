@@ -66,5 +66,7 @@ $('#clipboard-copy').on('blur', function () {
 
 $(function () {
     original_link = $('.result-box').val();
-    select_text();
+    if (original_link) {
+        select_text();
+    }
 });
