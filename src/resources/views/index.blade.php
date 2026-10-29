@@ -4,16 +4,15 @@
 
 @section('content')
     <div class="card bd-0">
-        <div class="card-body pd-lg-30">
-            <h4 class="tx-figtree tx-bold mg-b-15">Masukkan URL Anda di sini</h4>
+        <div class="card-body">
+            <h5 class="tx-figtree tx-bold mg-b-15">Masukkan URL Anda di sini</h5>
 
             <form id='shorten-form' method='POST' action='/shorten' role='form'>
                 <div class="long-link-input">
                     <input type='url' id="link-url" autocomplete='off' class='form-control form-control-lg' placeholder='https://' name='link-url' />
                     <div class="invalid-feedback">URL tidak valid. Gunakan alamat lengkap, contoh: https://www.its.ac.id</div>
                 </div>
-
-                <p class="mg-b-10">Kustomisasi tautan</p>
+                <h5 class="tx-figtree tx-bold mg-b-15">Kustomisasi tautan</h5>
                 <div class="d-flex flex-wrap align-items-center gap-2">
                     <div class="input-group custom-url-group">
                         <div class="input-group-prepend">
@@ -22,7 +21,7 @@
                         <input type='text' id="custom-ending" placeholder="akhiran tautan Anda" autocomplete="off"
                             class='form-control custom-url-field' name='custom-ending' />
                     </div>
-                    <button type="button" class='btn btn-success tx-bold' id='check-link-availability'>Cek Ketersediaan</button>
+                    <button type="button" class='btn btn btn-subtle-primary tx-bold' id='check-link-availability'>Cek Ketersediaan</button>
                 </div>
                 <div id='link-availability-status' class="tx-13 mg-t-10 mg-b-20" style="min-height: 20px;"></div>
 
