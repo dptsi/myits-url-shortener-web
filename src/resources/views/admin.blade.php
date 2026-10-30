@@ -62,7 +62,16 @@
 <script src='/mids/lib/datatables.net/js/jquery.dataTables.min.js'></script>
 <script src='/js/datatables-mids.js'></script>
 <script src='/js/api.js'></script>
+<script src='/js/clipboard.min.js'></script>
 <script>
+@php
+    $shortBase = rtrim(env('APP_PROTOCOL') . env('APP_ADDRESS'), '/');
+    if (!preg_match('#^https?://#', $shortBase)) {
+        $shortBase = 'https://' . $shortBase;
+    }
+@endphp
+    var SHORT_BASE = @json($shortBase);
+
     polr.directive('editLongLinkModal', function() {
         return {
             scope: {
@@ -261,7 +270,18 @@
                         {
                             className: 'col-short-url wrap-text',
                             data: 'short_url',
-                            name: 'short_url'
+                            name: 'short_url',
+                            render: function(data, type) {
+                                if (type !== 'display') return data;
+                                // Tautan bisa diklik, label tanpa protokol: its.id/akhiran
+                                var href  = $('<div>').text(SHORT_BASE + '/' + data).html();
+                                var label = $('<div>').text(SHORT_BASE.replace(/^https?:\/\//, '') + '/' + data).html();
+                                return '<div class="d-inline-flex align-items-center gap-1">'
+                                     + '<a href="' + href + '" target="_blank" rel="noopener" class="tx-medium">' + label + '</a>'
+                                     + '<button type="button" class="btn btn-icon btn-sm bd-0 d-inline-flex align-items-center copy-short-url" data-clipboard-text="' + href + '" title="Salin tautan">'
+                                     + '<span class="ms-rounded tx-18">content_copy</span></button>'
+                                     + '</div>';
+                            }
                         },
                         {
                             data: 'created_at',
@@ -278,7 +298,16 @@
                             data: 'username',
                             orderable: false,
                             name: 'username',
-                            searchable: false
+                            searchable: false,
+                            render: function(data, type, row) {
+                                if (type !== 'display') return data;
+                                // Nama pembuat, email di bawahnya
+                                var html = $('<div>').text(data || '-').html();
+                                if (row.email) {
+                                    html += '<div class="tx-12 tx-color-03">' + $('<div>').text(row.email).html() + '</div>';
+                                }
+                                return html;
+                            }
                         },
                         {
                             className: 'col-actions',
@@ -432,6 +461,12 @@
 
         $scope.init();
 
+        // Tombol salin di kolom tautan pendek
+        var clipboard = new Clipboard('.copy-short-url');
+        clipboard.on('success', function(e) {
+            e.clearSelection();
+            toastr.success('Tautan disalin.', 'Berhasil');
+        });
 
         //nusantara
         $(document).on('click', '.edit-link', function(e) {

@@ -208,6 +208,7 @@ class AdminPaginationController extends Controller
                 'links.created_at',
                 'links.base64',
                 'users.username',
+                'users.email',
                 'links.is_disabled'
             ]);
         return Datatables::of($admin_links)
