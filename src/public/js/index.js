@@ -82,7 +82,7 @@ $(function() {
         });
     }
 
-    $('.custom-url-field').on('input', function() {
+    $('.custom-url-field').on('input change', function() {
         endingAvailable = false;
         updateShortenButton();
         clearTimeout(checkTimer);

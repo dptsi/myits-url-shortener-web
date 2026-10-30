@@ -71,8 +71,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-loading-overlay/2.1.7/loadingoverlay.min.js"></script>
     <script src='/js/qrcode.min.js'></script>
     <script src='/js/clipboard.min.js'></script>
-    <script src='/js/index.js'></script>
-    <script src='/js/shorten_result.js'></script>
+    <script src='/js/index.js?v={{ filemtime(public_path('js/index.js')) }}'></script>
+    <script src='/js/shorten_result.js?v={{ filemtime(public_path('js/shorten_result.js')) }}'></script>
     <script>
         // Tombol Pendekkan diaktifkan oleh index.js hanya jika akhiran tersedia
         document.getElementById('shorten').disabled = true;
