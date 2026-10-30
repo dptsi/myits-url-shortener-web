@@ -1,6 +1,6 @@
 $(function() {
 
-    // Pendekkan hanya bisa diklik jika URL valid dan akhiran sudah dicek tersedia
+    // Pendekkan hanya bisa diklik jika URL valid dan akhiran tersedia
     var endingAvailable = false;
 
     // User boleh mengetik tanpa protokol; https:// ditambahkan otomatis
@@ -39,11 +39,54 @@ $(function() {
         }
     });
 
-    // Akhiran yang diubah harus dicek ulang sebelum bisa dipendekkan
+    // Ketersediaan akhiran dicek otomatis setelah user berhenti mengetik
+    var checkTimer = null;
+    var checkSeq = 0;
+
+    function setAvailabilityStatus(cls, icon, text) {
+        $('#link-availability-status').html('<span class="' + cls + ' d-inline-flex align-items-center gap-1"><span class="ms-rounded tx-16">' + icon + '</span> ' + text + '</span>');
+    }
+
+    function checkAvailability() {
+        var custom_link = $.trim($('.custom-url-field').val());
+        // Respons dari pengecekan lama diabaikan
+        var seq = ++checkSeq;
+        if (custom_link === '') {
+            $('#link-availability-status').empty();
+            return;
+        }
+        setAvailabilityStatus('tx-color-03', 'progress_activity', 'Memeriksa...');
+        $.ajax({
+            url: "/api/v2/link_avail_check",
+            type: "POST",
+            data: {
+                link_ending: custom_link
+            },
+            dataType: "html"
+        }).done(function(msg) {
+            if (seq !== checkSeq) return;
+            if (msg == 'unavailable') {
+                setAvailabilityStatus('tx-danger', 'block', 'Akhiran sudah dipakai');
+            } else if (msg == 'available') {
+                setAvailabilityStatus('tx-success', 'check_circle', 'Akhiran tersedia');
+                endingAvailable = true;
+                updateShortenButton();
+            } else if (msg == 'invalid') {
+                setAvailabilityStatus('tx-warning', 'warning', 'Akhiran tidak valid (gunakan huruf, angka, - atau _)');
+            } else {
+                setAvailabilityStatus('tx-danger', 'error', 'Terjadi kesalahan, coba lagi');
+            }
+        }).fail(function() {
+            if (seq !== checkSeq) return;
+            setAvailabilityStatus('tx-danger', 'error', 'Terjadi kesalahan, coba lagi');
+        });
+    }
+
     $('.custom-url-field').on('input', function() {
         endingAvailable = false;
         updateShortenButton();
-        $('#link-availability-status').empty();
+        clearTimeout(checkTimer);
+        checkTimer = setTimeout(checkAvailability, 400);
     });
 
     // Hasil pemendekan ditampilkan di bawah form tanpa pindah halaman
@@ -63,8 +106,9 @@ $(function() {
             $('#shorten-result').show();
             $('#shorten-result')[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
             select_text();
-            // Akhiran sudah terpakai oleh tautan ini, jadi harus dicek ulang
+            // Akhiran sudah terpakai oleh tautan ini
             endingAvailable = false;
+            checkSeq++;
             $('#link-availability-status').empty();
         }).fail(function(jqXHR) {
             var res = jqXHR.responseJSON || {};
@@ -79,6 +123,8 @@ $(function() {
     $('#shorten-another').click(function() {
         $('#shorten-form')[0].reset();
         $('#link-url').removeClass('is-invalid');
+        clearTimeout(checkTimer);
+        checkSeq++;
         $('#link-availability-status').empty();
         endingAvailable = false;
         updateShortenButton();
@@ -86,37 +132,6 @@ $(function() {
         $('#link-url').focus();
     });
 
-    $('#check-link-availability').click(function() {
-        var custom_link = $('.custom-url-field').val();
-        endingAvailable = false;
-        updateShortenButton();
-        var request = $.ajax({
-            url: "/api/v2/link_avail_check",
-            type: "POST",
-            data: {
-                link_ending: custom_link
-            },
-            dataType: "html"
-        });
-        $('#link-availability-status').html('<span class="tx-color-03 d-inline-flex align-items-center gap-1"><span class="ms-rounded tx-16">progress_activity</span> Memeriksa...</span>');
-        request.done(function(msg) {
-            if (msg == 'unavailable') {
-                $('#link-availability-status').html('<span class="tx-danger d-inline-flex align-items-center gap-1"><span class="ms-rounded tx-16">block</span> Akhiran sudah dipakai</span>');
-            } else if (msg == 'available') {
-                $('#link-availability-status').html('<span class="tx-success d-inline-flex align-items-center gap-1"><span class="ms-rounded tx-16">check_circle</span> Akhiran tersedia</span>');
-                endingAvailable = true;
-                updateShortenButton();
-            } else if (msg == 'invalid') {
-                $('#link-availability-status').html('<span class="tx-warning d-inline-flex align-items-center gap-1"><span class="ms-rounded tx-16">warning</span> Akhiran tidak valid (gunakan huruf, angka, - atau _)</span>');
-            } else {
-                $('#link-availability-status').html('<span class="tx-danger d-inline-flex align-items-center gap-1"><span class="ms-rounded tx-16">error</span> Terjadi kesalahan, coba lagi</span>');
-            }
-        });
-
-        request.fail(function(jqXHR, textStatus) {
-            $('#link-availability-status').html('<span class="tx-danger d-inline-flex align-items-center gap-1"><span class="ms-rounded tx-16">error</span> Terjadi kesalahan, coba lagi</span>');
-        });
-    });
     min = 1;
     max = 2;
     var i = Math.floor(Math.random() * (max - min + 1)) + min;

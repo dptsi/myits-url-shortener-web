@@ -34,10 +34,6 @@
         max-width: 100%;
         min-width: 0;
     }
-
-    #check-link-availability {
-        width: 100%;
-    }
 }
 
 /* @media (max-width: 768px) {

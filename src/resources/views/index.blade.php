@@ -21,7 +21,6 @@
                         <input type='text' id="custom-ending" placeholder="akhiran tautan Anda" autocomplete="off"
                             class='form-control custom-url-field' name='custom-ending' />
                     </div>
-                    <button type="button" class='btn btn btn-subtle-primary tx-medium' id='check-link-availability'>Cek Ketersediaan</button>
                 </div>
                 <div id='link-availability-status' class="tx-13 mg-t-10 mg-b-20" style="min-height: 20px;"></div>
 
