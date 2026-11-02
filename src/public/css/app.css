@@ -31,15 +31,3 @@
 .swal2-popup {
     font-family: 'Roboto', sans-serif;
 }
-.swal-warning-body { text-align: justify; font-size: 15px; font-weight: 400; line-height: 1.6; }
-.swal-warning-body b, .swal-warning-body strong { font-weight: 600; }
-
-/* Form buat tautan: tata letak mengikuti form lama */
-.long-link-input { margin-bottom: 25px; }
-.custom-url-group { width: auto; flex: 0 1 auto; flex-wrap: nowrap; }
-.custom-url-group .custom-url-field { flex: 0 1 400px; width: 400px; min-width: 0; }
-#shorten { min-width: 300px; }
-@media (max-width: 500px) {
-    .custom-url-group, .custom-url-group .custom-url-field { flex: 1 1 auto; width: 100%; }
-    #shorten, #check-link-availability { width: 100%; min-width: 0; }
-}

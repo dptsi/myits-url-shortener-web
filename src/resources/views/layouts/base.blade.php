@@ -178,6 +178,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </div>
     </div>
 
+    @yield('modal')
+
     {{-- Load JavaScript dependencies --}}
     <script src="/js/constants.js"></script>
     <script src="/mids/lib/jquery/jquery.min.js"></script>

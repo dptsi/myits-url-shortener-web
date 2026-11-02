@@ -27,10 +27,22 @@ $(function() {
         $('#shorten').prop('disabled', !(endingAvailable && isValidUrl($('#link-url').val())));
     }
 
+    // Pesan galat berada di luar pembungkus input, jadi ditampilkan lewat kelas
+    function updateLinkUrlField() {
+        var value = $('#link-url').val();
+        var invalid = value !== '' && !isValidUrl(value);
+        $('#link-url').toggleClass('is-invalid', invalid);
+        $('#link-url-feedback').toggleClass('d-block', invalid);
+        $('#clear-link-url').toggleClass('d-none', value === '');
+    }
+
     $('#link-url').on('input', function() {
-        var value = $(this).val();
-        $(this).toggleClass('is-invalid', value !== '' && !isValidUrl(value));
+        updateLinkUrlField();
         updateShortenButton();
+    });
+
+    $('#clear-link-url').click(function() {
+        $('#link-url').val('').trigger('input').focus();
     });
 
     $('#link-url').on('blur', function() {
@@ -43,8 +55,14 @@ $(function() {
     var checkTimer = null;
     var checkSeq = 0;
 
-    function setAvailabilityStatus(cls, icon, text) {
-        $('#link-availability-status').html('<span class="' + cls + ' d-inline-flex align-items-center gap-1"><span class="ms-rounded tx-16">' + icon + '</span> ' + text + '</span>');
+    function setAvailabilityStatus(iconClass, icon, text) {
+        $('#link-availability-status').html(
+            '<p class="tx-color-01 mg-b-0 mg-t-10"><span class="ms-rounded ms-fill tx-18 ' + iconClass + ' align-middle" translate="no">' + icon + '</span> ' + text + '</p>'
+        );
+    }
+
+    function resetAvailabilityStatus() {
+        $('#link-availability-status').html('<p class="tx-color-03 mg-b-0 mg-t-10">Buat tautan yang mudah diingat</p>');
     }
 
     function checkAvailability() {
@@ -52,7 +70,7 @@ $(function() {
         // Respons dari pengecekan lama diabaikan
         var seq = ++checkSeq;
         if (custom_link === '') {
-            $('#link-availability-status').empty();
+            resetAvailabilityStatus();
             return;
         }
         setAvailabilityStatus('tx-color-03', 'progress_activity', 'Memeriksa...');
@@ -66,9 +84,9 @@ $(function() {
         }).done(function(msg) {
             if (seq !== checkSeq) return;
             if (msg == 'unavailable') {
-                setAvailabilityStatus('tx-danger', 'block', 'Akhiran sudah dipakai');
+                setAvailabilityStatus('tx-danger', 'cancel', 'Tautan telah terpakai. Coba alternatif lain.');
             } else if (msg == 'available') {
-                setAvailabilityStatus('tx-success', 'check_circle', 'Akhiran tersedia');
+                setAvailabilityStatus('tx-success', 'check_circle', 'Tautan tersedia. Silakan tekan tombol Buat.');
                 endingAvailable = true;
                 updateShortenButton();
             } else if (msg == 'invalid') {
@@ -82,15 +100,31 @@ $(function() {
         });
     }
 
-    $('.custom-url-field').on('input change', function() {
+    $('.custom-url-field').on('input', function() {
         endingAvailable = false;
         updateShortenButton();
         clearTimeout(checkTimer);
         checkTimer = setTimeout(checkAvailability, 400);
     });
 
-    // Hasil pemendekan ditampilkan di bawah form tanpa pindah halaman
-    window.submitShorten = function() {
+    var qrSeq = 0;
+
+    function showQrCode(shortUrl) {
+        var slug = new URL(shortUrl).pathname.replace(/^\//, '');
+        var seq = ++qrSeq;
+        $('#short-url-qr-wrap, #download-short-url-qr').addClass('d-none');
+        // QR tidak tersedia: tautan tetap bisa dipakai, bagian QR saja yang disembunyikan
+        $.get('/generate-qrbase64/' + encodeURIComponent(slug)).done(function(base64) {
+            if (seq !== qrSeq || !base64) return;
+            var src = 'data:image/png;base64,' + base64;
+            $('#short-url-qr').attr({ src: src, alt: 'Kode QR ' + shortUrl });
+            $('#download-short-url-qr').attr({ href: src, download: 'qr-' + slug.replace(/\//g, '-') + '.png' });
+            $('#short-url-qr-wrap, #download-short-url-qr').removeClass('d-none');
+        });
+    }
+
+    // Hasil ditampilkan di bawah form, dan form langsung siap untuk tautan berikutnya
+    function submitShorten() {
         var $button = $('#shorten');
         $button.prop('disabled', true);
         $('#link-url').val(normalizeUrl($('#link-url').val()));
@@ -100,16 +134,17 @@ $(function() {
             data: $('#shorten-form').serialize(),
             dataType: 'json'
         }).done(function(res) {
-            original_link = res.short_url;
-            $('#short_url').val(res.short_url);
-            $('.qr-code-container').empty().hide();
-            $('#shorten-result').show();
-            $('#shorten-result')[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
-            select_text();
-            // Akhiran sudah terpakai oleh tautan ini
-            endingAvailable = false;
+            $('#short-url-text').text(res.short_url);
+            $('#copy-short-url').attr('data-clipboard-text', res.short_url);
+            showQrCode(res.short_url);
+            $('#shorten-result').removeClass('d-none');
+            $('#shorten-result')[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            $('#shorten-form')[0].reset();
+            updateLinkUrlField();
+            clearTimeout(checkTimer);
             checkSeq++;
-            $('#link-availability-status').empty();
+            resetAvailabilityStatus();
+            endingAvailable = false;
         }).fail(function(jqXHR) {
             var res = jqXHR.responseJSON || {};
             var message = res.message || 'Terjadi kesalahan, coba lagi';
@@ -118,18 +153,28 @@ $(function() {
             }
             toastr['error'](message, 'Error');
         }).always(updateShortenButton);
-    };
+    }
 
-    $('#shorten-another').click(function() {
-        $('#shorten-form')[0].reset();
-        $('#link-url').removeClass('is-invalid');
-        clearTimeout(checkTimer);
-        checkSeq++;
-        $('#link-availability-status').empty();
-        endingAvailable = false;
-        updateShortenButton();
-        $('#shorten-result').hide();
-        $('#link-url').focus();
+    $('#confirm-shorten').click(function() {
+        $('#modalSetujuiKetentuan').modal('hide');
+        submitShorten();
+    });
+
+    var copyTimer = null;
+    var clipboard = new Clipboard('#copy-short-url');
+    clipboard.on('success', function(e) {
+        e.clearSelection();
+        var $button = $('#copy-short-url');
+        $button.find('.ms-rounded').text('check');
+        $button.find('.copy-label').text('Tersalin');
+        clearTimeout(copyTimer);
+        copyTimer = setTimeout(function() {
+            $button.find('.ms-rounded').text('content_copy');
+            $button.find('.copy-label').text('Salin Tautan');
+        }, 1500);
+    });
+    clipboard.on('error', function() {
+        toastr['error']('Tautan gagal disalin, salin secara manual', 'Error');
     });
 
     min = 1;
