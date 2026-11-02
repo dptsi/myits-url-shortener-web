@@ -24,7 +24,7 @@
                 </div>
                 <div id='link-availability-status' class="tx-13 mg-t-10 mg-b-20" style="min-height: 20px;"></div>
 
-                <button type='button' class='btn btn-primary tx-medium' id='shorten'>Pendekkan</button>
+                <button type='button' class='btn btn-primary tx-medium' id='shorten'>Buat</button>
                 <input type="hidden" name='_token' value='{{ csrf_token() }}' />
             </form>
         </div>
